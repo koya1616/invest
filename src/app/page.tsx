@@ -1,11 +1,5 @@
-import SelectInterval from "@/components/SelectInterval";
+import SelectCode from "@/components/SelectCode";
 
-export const Home = () => {
-  return (
-    <>
-      <SelectInterval />
-    </>
-  );
-};
-
-export default Home;
+export default function Page() {
+  return <SelectCode code="" />;
+}
