@@ -24,8 +24,8 @@ export const MadRateChart = ({
           <YAxis />
           <Tooltip />
           <Legend />
-          <Line name="5日 MAD" dot={false} dataKey="mad5" stroke="blue" />
-          <Line name="25日 MAD" dot={false} dataKey="mad25" stroke="red" />
+          <Line name="乖離率(5)" dot={false} dataKey="mad5" stroke="blue" />
+          <Line name="乖離率(25)" dot={false} dataKey="mad25" stroke="red" />
         </ComposedChart>
       </ResponsiveContainer>
 

@@ -25,9 +25,9 @@ export const RciChart = ({
           <YAxis />
           <Tooltip />
           <Legend />
-          <Line dot={false} dataKey="rci9" stroke="blue" name="短期(9)" />
-          <Line dot={false} dataKey="rci14" stroke="green" name="中期(14)" />
-          <Line dot={false} dataKey="rci25" stroke="red" name="長期(25)" />
+          <Line dot={false} dataKey="rci9" stroke="blue" name="RCI 短期(9)" />
+          <Line dot={false} dataKey="rci14" stroke="green" name="RCI 中期(14)" />
+          <Line dot={false} dataKey="rci25" stroke="red" name="RCI 長期(25)" />
         </ComposedChart>
       </ResponsiveContainer>
 
