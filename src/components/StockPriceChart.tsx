@@ -39,7 +39,7 @@ export const StockPriceChart = ({
         <span>長期</span>
       </label>
 
-      <ResponsiveContainer width="100%" height="50%">
+      <ResponsiveContainer width="100%" height="90%">
         <ComposedChart data={dataSlice} margin={{ top: 0, right: 20, bottom: 0, left: 0 }} barGap={-3}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
