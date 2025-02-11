@@ -6,7 +6,11 @@ export const SelectCode = ({ code }: { code: string }) => {
   const router = useRouter();
 
   return (
-    <select value={code} onChange={(e) => router.push(`/chart/${e.target.value}/1m`)}>
+    <select
+      value={code}
+      onChange={(e) => router.push(`/chart/${e.target.value}/1m`)}
+      className="p-2 mb-4 border border-gray-300 rounded-md"
+    >
       <option value="">選択する</option>
       <option value="9432">9432 NTT</option>
       <option value="9433">9433 KDDI</option>
