@@ -4,6 +4,7 @@ import StockPriceChart from "./StockPriceChart";
 import { calculateAverage, calculateEMA, calculateRSI } from "@/lib/calculate";
 import RsiChart from "./RsiChart";
 import MacdChart from "./MacdChart";
+import VolumeChart from "./VolumeChart";
 
 export const Chart = async ({ code, interval }: { code: string; interval: string }) => {
   const data = await fetchChart(code, interval);
@@ -13,6 +14,7 @@ export const Chart = async ({ code, interval }: { code: string; interval: string
       <StockPriceChart data={formattedPrice.data} min={formattedPrice.min} max={formattedPrice.max} />
       <RsiChart data={formatRsi(data, interval)} />
       <MacdChart data={formatMacd(data, interval)} />
+      <VolumeChart data={formatVolume(data, interval)} />
     </>
   );
 };
@@ -114,6 +116,21 @@ const formatMacd = (data: StockData, interval: string) => {
         macd: macd,
         signal: calculatedSignal,
         histogram: macd !== null && calculatedSignal !== null ? macd - calculatedSignal : null,
+      };
+    })
+    .filter((item) => item !== null);
+};
+
+const formatVolume = (data: StockData, interval: string) => {
+  return data.chart.result[0].timestamp
+    .map((timestamp, index) => {
+      const { volume } = getQuote(data.chart.result[0].indicators.quote[0], index);
+
+      if (volume === null) return null;
+
+      return {
+        name: formatTimestamp(timestamp, interval),
+        volume: volume,
       };
     })
     .filter((item) => item !== null);
