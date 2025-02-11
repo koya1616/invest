@@ -1,59 +1,83 @@
-import { fetchChart } from "@/actions/chart";
+import { fetchChart, type Quote, type StockData } from "@/actions/chart";
 import { formatTimestamp } from "@/lib/date";
+import StockPriceChart from "./StockPriceChart";
+import { calculateAverage, calculateRSI } from "@/lib/calculate";
+import RsiChart from "./RsiChart";
 
 export const Chart = async ({ code, interval }: { code: string; interval: string }) => {
   const data = await fetchChart(code, interval);
+  const formattedPrice = formatPrice(data, interval);
   return (
     <>
-      {data.chart.result.map((chart) => (
-        <div key={chart.meta.symbol}>
-          <h1>{chart.meta.symbol}</h1>
-          <div>
-            {chart.timestamp.map(
-              (timestamp, index) =>
-                chart.indicators.quote[0].close[index] !== null && (
-                  <div key={timestamp} className="grid grid-cols-2 gap-2 p-4 border-b border-gray-200 hover:bg-gray-50">
-                    <div className="text-lg font-medium text-gray-900">{formatTimestamp(timestamp, "time")}</div>
-                    <div className="text-right">
-                      <div className="mb-2">
-                        <span className="text-gray-500">終値:</span>
-                        <span className="ml-2 font-semibold text-gray-900">
-                          {Math.floor(chart.indicators.quote[0].close[index] * 10) / 10}
-                        </span>
-                      </div>
-                      <div className="mb-2">
-                        <span className="text-gray-500">始値:</span>
-                        <span className="ml-2 font-semibold text-gray-900">
-                          {Math.floor(chart.indicators.quote[0].open[index] * 10) / 10}
-                        </span>
-                      </div>
-                      <div className="mb-2">
-                        <span className="text-gray-500">高値:</span>
-                        <span className="ml-2 font-semibold text-gray-900">
-                          {Math.floor(chart.indicators.quote[0].high[index] * 10) / 10}
-                        </span>
-                      </div>
-                      <div className="mb-2">
-                        <span className="text-gray-500">安値:</span>
-                        <span className="ml-2 font-semibold text-gray-900">
-                          {Math.floor(chart.indicators.quote[0].low[index] * 10) / 10}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-gray-500">出来高:</span>
-                        <span className="ml-2 font-semibold text-gray-900">
-                          {chart.indicators.quote[0].volume[index].toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ),
-            )}
-          </div>
-        </div>
-      ))}
+      <StockPriceChart data={formattedPrice.data} min={formattedPrice.min} max={formattedPrice.max} />
+      <RsiChart data={formatRsi(data, interval)} />
     </>
   );
+};
+
+const getQuote = (quote: Quote, index: number) => {
+  return {
+    open: Math.floor(quote.open[index] * 10) / 10,
+    close: Math.floor(quote.close[index] * 10) / 10,
+    high: Math.floor(quote.high[index] * 10) / 10,
+    low: Math.floor(quote.low[index] * 10) / 10,
+    volume: quote.volume[index],
+  };
+};
+
+const formatPrice = (data: StockData, interval: string) => {
+  let min: number = Number.POSITIVE_INFINITY;
+  let max: number = Number.NEGATIVE_INFINITY;
+  const sma5: number[] = [];
+  const sma10: number[] = [];
+  const sma20: number[] = [];
+  const formattedData = data.chart.result[0].timestamp
+    .map((timestamp, index) => {
+      const { open, close, high, low } = getQuote(data.chart.result[0].indicators.quote[0], index);
+
+      if (low === 0 || high === 0 || close === 0) return null;
+
+      min = Math.min(min, high, low);
+      max = Math.max(max, high, low);
+
+      sma5.push(close);
+      sma10.push(close);
+      sma20.push(close);
+      if (sma5.length > 5) sma5.shift();
+      if (sma10.length > 10) sma10.shift();
+      if (sma20.length > 20) sma20.shift();
+
+      return {
+        name: formatTimestamp(timestamp, interval),
+        openClose: [open, close],
+        lowHigh: [low, high],
+        sma5: calculateAverage(sma5, 5),
+        sma10: calculateAverage(sma10, 10),
+        sma20: calculateAverage(sma20, 20),
+      };
+    })
+    .filter((item) => item !== null);
+
+  return { data: formattedData, min, max };
+};
+
+const formatRsi = (data: StockData, interval: string) => {
+  const rsi: number[] = [];
+  return data.chart.result[0].timestamp
+    .map((timestamp, index) => {
+      const { close, volume } = getQuote(data.chart.result[0].indicators.quote[0], index);
+
+      if (volume === null) return null;
+
+      volume === 0 && close === 0 ? rsi.push(Number(rsi.at(-1))) : rsi.push(close);
+      if (rsi.length > 15) rsi.shift();
+
+      return {
+        name: formatTimestamp(timestamp, interval),
+        rsi: calculateRSI(rsi, 14),
+      };
+    })
+    .filter((item) => item !== null);
 };
 
 export default Chart;
