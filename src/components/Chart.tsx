@@ -7,12 +7,14 @@ import MacdChart from "./MacdChart";
 import VolumeChart from "./VolumeChart";
 import MadRateChart from "./MadRateChart";
 import RciChart from "./RciChart";
+import StochasticChart from "./StochasticChart";
 
 export const Chart = async ({ code, interval }: { code: string; interval: string }) => {
   const data = await fetchChart(code, interval);
   const formattedPrice = formatPrice(data, interval);
   return (
     <>
+      <StochasticChart data={formatStochastic(data, interval)} />
       <StockPriceChart data={formattedPrice.data} min={formattedPrice.min} max={formattedPrice.max} />
       <RsiChart data={formatRsi(data, interval)} />
       <MacdChart data={formatMacd(data, interval)} />
@@ -198,6 +200,38 @@ const formatRci = (data: StockData, interval: string) => {
         rci9: calculateRCI(rci9, 9),
         rci14: calculateRCI(rci14, 14),
         rci25: calculateRCI(rci25, 25),
+      };
+    })
+    .filter((item) => item !== null);
+};
+
+const formatStochastic = (data: StockData, interval: string) => {
+  const highs: number[] = [];
+  const lows: number[] = [];
+  const pastKValues: number[] = [];
+  const K = 5;
+  const D = 3;
+  return data.chart.result[0].timestamp
+    .map((timestamp, index) => {
+      const { high, low, close } = getQuote(data.chart.result[0].indicators.quote[0], index);
+      if (high === 0 || low === 0 || close === 0) return null;
+
+      highs.push(high);
+      lows.push(low);
+      if (highs.length > K) highs.shift();
+      if (lows.length > K) lows.shift();
+
+      const max = Math.max(...highs);
+      const min = Math.min(...lows);
+
+      const k = ((close - min) / (max - min)) * 100;
+      pastKValues.push(k);
+      if (pastKValues.length > D) pastKValues.shift();
+
+      return {
+        name: formatTimestamp(timestamp, interval),
+        k,
+        d: pastKValues.reduce((sum, val) => sum + val, 0) / D,
       };
     })
     .filter((item) => item !== null);
