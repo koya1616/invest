@@ -67,10 +67,12 @@ const formatRsi = (data: StockData, interval: string) => {
     .map((timestamp, index) => {
       const { close, volume } = getQuote(data.chart.result[0].indicators.quote[0], index);
 
-      if (volume === null) return null;
+      if (close !== 0) {
+        rsi.push(close);
+        if (rsi.length > 15) rsi.shift();
+      }
 
-      volume === 0 && close === 0 ? rsi.push(Number(rsi.at(-1))) : rsi.push(close);
-      if (rsi.length > 15) rsi.shift();
+      if (volume === null || (volume === 0 && close === 0)) return null;
 
       return {
         name: formatTimestamp(timestamp, interval),
