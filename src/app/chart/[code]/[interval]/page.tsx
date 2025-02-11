@@ -1,5 +1,6 @@
 import Chart from "@/components/Chart";
 import SelectCode from "@/components/SelectCode";
+import SelectInterval from "@/components/SelectInterval";
 import { Suspense } from "react";
 
 export default async function Page({
@@ -11,6 +12,7 @@ export default async function Page({
   return (
     <div>
       <SelectCode code={p.code} />
+      <SelectInterval code={p.code} interval={p.interval} />
       <Suspense fallback={<div>Loading...</div>}>
         <Chart code={p.code} interval={p.interval} />
       </Suspense>
