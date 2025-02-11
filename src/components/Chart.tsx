@@ -1,8 +1,9 @@
 import { fetchChart, type Quote, type StockData } from "@/actions/chart";
 import { formatTimestamp } from "@/lib/date";
 import StockPriceChart from "./StockPriceChart";
-import { calculateAverage, calculateRSI } from "@/lib/calculate";
+import { calculateAverage, calculateEMA, calculateRSI } from "@/lib/calculate";
 import RsiChart from "./RsiChart";
+import MacdChart from "./MacdChart";
 
 export const Chart = async ({ code, interval }: { code: string; interval: string }) => {
   const data = await fetchChart(code, interval);
@@ -11,6 +12,7 @@ export const Chart = async ({ code, interval }: { code: string; interval: string
     <>
       <StockPriceChart data={formattedPrice.data} min={formattedPrice.min} max={formattedPrice.max} />
       <RsiChart data={formatRsi(data, interval)} />
+      <MacdChart data={formatMacd(data, interval)} />
     </>
   );
 };
@@ -77,6 +79,40 @@ const formatRsi = (data: StockData, interval: string) => {
       return {
         name: formatTimestamp(timestamp, interval),
         rsi: calculateRSI(rsi, 14),
+      };
+    })
+    .filter((item) => item !== null);
+};
+
+const formatMacd = (data: StockData, interval: string) => {
+  const ema12: number[] = [];
+  const ema26: number[] = [];
+  const signal: number[] = [];
+  return data.chart.result[0].timestamp
+    .map((timestamp, index) => {
+      const { close, volume } = getQuote(data.chart.result[0].indicators.quote[0], index);
+
+      if (close !== 0) {
+        ema12.push(close);
+        ema26.push(close);
+      }
+
+      const calculatedEma12 = calculateEMA(ema12, 12);
+      const calculatedEma26 = calculateEMA(ema26, 26);
+      const macd = calculatedEma12 !== null && calculatedEma26 !== null ? calculatedEma12 - calculatedEma26 : null;
+
+      if (close !== 0 && macd !== null) {
+        signal.push(macd);
+      }
+
+      if (volume === null || (volume === 0 && close === 0)) return null;
+
+      const calculatedSignal = calculateEMA(signal, 9);
+      return {
+        name: formatTimestamp(timestamp, interval),
+        macd: macd,
+        signal: calculatedSignal,
+        histogram: macd !== null && calculatedSignal !== null ? macd - calculatedSignal : null,
       };
     })
     .filter((item) => item !== null);
