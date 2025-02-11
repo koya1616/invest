@@ -25,9 +25,9 @@ export const MacdChart = ({
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="histogram" fill="red" />
-          <Line dot={false} dataKey="macd" stroke="blue" />
-          <Line dot={false} dataKey="signal" stroke="green" />
+          <Bar dataKey="histogram" fill="red" name="MACD ヒストグラム" />
+          <Line dot={false} dataKey="macd" stroke="blue" name="MACD" />
+          <Line dot={false} dataKey="signal" stroke="green" name="シグナル" />
         </ComposedChart>
       </ResponsiveContainer>
 

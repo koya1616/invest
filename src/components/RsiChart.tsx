@@ -23,7 +23,7 @@ export const RsiChart = ({
           <YAxis />
           <Tooltip />
           <Legend />
-          <Line dot={false} dataKey="rsi" stroke="blue" />
+          <Line name="RSI" dot={false} dataKey="rsi" stroke="blue" />
         </ComposedChart>
       </ResponsiveContainer>
 
