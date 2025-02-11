@@ -5,6 +5,14 @@ export interface StockData {
   };
 }
 
+export interface Quote {
+  high: number[];
+  low: number[];
+  open: number[];
+  volume: number[];
+  close: number[];
+}
+
 interface StockResult {
   meta: {
     currency: string;
@@ -39,13 +47,7 @@ interface StockResult {
   };
   timestamp: number[];
   indicators: {
-    quote: {
-      high: number[];
-      low: number[];
-      open: number[];
-      volume: number[];
-      close: number[];
-    }[];
+    quote: Quote[];
     adjclose: {
       adjclose: number[];
     }[];
