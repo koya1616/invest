@@ -1,11 +1,12 @@
 import { fetchChart, type Quote, type StockData } from "@/actions/chart";
 import { formatTimestamp } from "@/lib/date";
 import StockPriceChart from "./StockPriceChart";
-import { calculateSma, calculateEMA, calculateRSI } from "@/lib/calculate";
+import { calculateSma, calculateEMA, calculateRSI, calculateRCI } from "@/lib/calculate";
 import RsiChart from "./RsiChart";
 import MacdChart from "./MacdChart";
 import VolumeChart from "./VolumeChart";
 import MadRateChart from "./MadRateChart";
+import RciChart from "./RciChart";
 
 export const Chart = async ({ code, interval }: { code: string; interval: string }) => {
   const data = await fetchChart(code, interval);
@@ -17,6 +18,7 @@ export const Chart = async ({ code, interval }: { code: string; interval: string
       <MacdChart data={formatMacd(data, interval)} />
       <VolumeChart data={formatVolume(data, interval)} />
       <MadRateChart data={formatMadRate(data, interval)} />
+      <RciChart data={formatRci(data, interval)} />
     </>
   );
 };
@@ -169,6 +171,33 @@ const formatMadRate = (data: StockData, interval: string) => {
         name: formatTimestamp(timestamp, interval),
         mad5: ((close - calculatedSma5) / calculatedSma5) * 100,
         mad25: ((close - calculatedSma25) / calculatedSma25) * 100,
+      };
+    })
+    .filter((item) => item !== null);
+};
+
+const formatRci = (data: StockData, interval: string) => {
+  const rci9: { timestamp: number; close: number }[] = [];
+  const rci14: { timestamp: number; close: number }[] = [];
+  const rci25: { timestamp: number; close: number }[] = [];
+  return data.chart.result[0].timestamp
+    .map((timestamp, index) => {
+      const { close } = getQuote(data.chart.result[0].indicators.quote[0], index);
+
+      if (close === 0) return null;
+
+      rci9.push({ timestamp, close });
+      rci14.push({ timestamp, close });
+      rci25.push({ timestamp, close });
+      if (rci9.length > 9) rci9.shift();
+      if (rci14.length > 14) rci14.shift();
+      if (rci25.length > 25) rci25.shift();
+
+      return {
+        name: formatTimestamp(timestamp, interval),
+        rci9: calculateRCI(rci9, 9),
+        rci14: calculateRCI(rci14, 14),
+        rci25: calculateRCI(rci25, 25),
       };
     })
     .filter((item) => item !== null);
