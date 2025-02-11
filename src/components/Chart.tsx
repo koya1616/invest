@@ -14,13 +14,13 @@ export const Chart = async ({ code, interval }: { code: string; interval: string
   const formattedPrice = formatPrice(data, interval);
   return (
     <>
-      <StochasticChart data={formatStochastic(data, interval)} />
       <StockPriceChart data={formattedPrice.data} min={formattedPrice.min} max={formattedPrice.max} />
       <RsiChart data={formatRsi(data, interval)} />
       <MacdChart data={formatMacd(data, interval)} />
       <VolumeChart data={formatVolume(data, interval)} />
       <MadRateChart data={formatMadRate(data, interval)} />
       <RciChart data={formatRci(data, interval)} />
+      <StochasticChart data={formatStochastic(data, interval)} />
     </>
   );
 };
