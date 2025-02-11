@@ -46,8 +46,8 @@ export const StockPriceChart = ({
           <YAxis domain={[min, max]} />
           <Tooltip />
           <Legend />
-          <Bar name="価格範囲(終値-始値)" dataKey="openClose" />
-          <Bar name="価格範囲(高値-安値)" dataKey="lowHigh" maxBarSize={1} />
+          <Bar name="始値~終値" dataKey="openClose" />
+          <Bar name="安値~高値" dataKey="lowHigh" maxBarSize={1} />
           <Line name="5日移動平均" dot={false} dataKey="sma5" stroke="#0088FE" />
           {!isLongTermChecked && <Line name="10日移動平均" dot={false} dataKey="sma10" stroke="#FFBB28" />}
           {!isLongTermChecked && <Line name="20日移動平均" dot={false} dataKey="sma20" stroke="#FF8042" />}
