@@ -35,6 +35,8 @@ const formatPrice = (data: StockData, interval: string) => {
   const sma5: number[] = [];
   const sma10: number[] = [];
   const sma20: number[] = [];
+  const sma25: number[] = [];
+  const sma75: number[] = [];
   const formattedData = data.chart.result[0].timestamp
     .map((timestamp, index) => {
       const { open, close, high, low } = getQuote(data.chart.result[0].indicators.quote[0], index);
@@ -47,9 +49,13 @@ const formatPrice = (data: StockData, interval: string) => {
       sma5.push(close);
       sma10.push(close);
       sma20.push(close);
+      sma25.push(close);
+      sma75.push(close);
       if (sma5.length > 5) sma5.shift();
       if (sma10.length > 10) sma10.shift();
       if (sma20.length > 20) sma20.shift();
+      if (sma25.length > 25) sma25.shift();
+      if (sma75.length > 75) sma75.shift();
 
       return {
         name: formatTimestamp(timestamp, interval),
@@ -58,6 +64,8 @@ const formatPrice = (data: StockData, interval: string) => {
         sma5: calculateSma(sma5, 5),
         sma10: calculateSma(sma10, 10),
         sma20: calculateSma(sma20, 20),
+        sma25: calculateSma(sma25, 25),
+        sma75: calculateSma(sma75, 75),
         fill: close < open ? "#ef4444" : "#22c55e",
       };
     })
