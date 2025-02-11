@@ -16,6 +16,7 @@ export const StockPriceChart = ({
     sma5: number | null;
     sma10: number | null;
     sma20: number | null;
+    fill: string;
   }[];
   min: number;
   max: number;
@@ -31,11 +32,11 @@ export const StockPriceChart = ({
           <YAxis domain={[min, max]} />
           <Tooltip />
           <Legend />
-          <Bar dataKey="openClose" fill="#8884d8" />
-          <Bar dataKey="lowHigh" fill="#82ca9d" maxBarSize={1} />
-          <Line dot={false} dataKey="sma5" stroke="#ff7300" />
-          <Line dot={false} dataKey="sma10" stroke="red" />
-          <Line dot={false} dataKey="sma20" stroke="blue" />
+          <Bar name="価格範囲(終値-始値)" dataKey="openClose" />
+          <Bar name="価格範囲(高値-安値)" dataKey="lowHigh" maxBarSize={1} />
+          <Line name="5日移動平均" dot={false} dataKey="sma5" stroke="#0088FE" />
+          <Line name="10日移動平均" dot={false} dataKey="sma10" stroke="#FFBB28" />
+          <Line name="20日移動平均" dot={false} dataKey="sma20" stroke="#FF8042" />
         </ComposedChart>
       </ResponsiveContainer>
 

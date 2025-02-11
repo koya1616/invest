@@ -56,6 +56,7 @@ const formatPrice = (data: StockData, interval: string) => {
         sma5: calculateAverage(sma5, 5),
         sma10: calculateAverage(sma10, 10),
         sma20: calculateAverage(sma20, 20),
+        fill: close < open ? "#ef4444" : "#22c55e",
       };
     })
     .filter((item) => item !== null);
