@@ -1,6 +1,24 @@
-export const calculateAverage = (numbers: number[], period: number) => {
-  if (numbers.length !== period) return null;
-  return numbers.reduce((acc, current) => acc + current, 0) / period;
+/**
+ * 単純移動平均（SMA: Simple Moving Average）を計算します。
+ * SMAは、過去の価格データの平均値を取ることで、価格のトレンドを把握するために使用されます。
+ *
+ * 計算式:
+ * SMA = (データ1 + データ2 + ... + データN) / N
+ * ここで N は期間を表します。
+ *
+ * @param prices - 時系列順の価格データ配列
+ * @param period - SMA計算の対象期間
+ * @returns
+ * - SMA値
+ * - 入力配列の長さが指定期間と一致しない場合は null
+ * - 入力配列が空の場合は null
+ * - 価格データがすべてゼロの場合は 0
+ * - 価格データがすべて同じ場合はその値
+ * - それ以外の場合は計算されたSMA値
+ */
+export const calculateSma = (prices: number[], period: number): number | null => {
+  if (prices.length !== period) return null;
+  return prices.reduce((acc, current) => acc + current, 0) / period;
 };
 
 /**

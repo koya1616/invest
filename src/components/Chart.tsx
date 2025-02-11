@@ -1,7 +1,7 @@
 import { fetchChart, type Quote, type StockData } from "@/actions/chart";
 import { formatTimestamp } from "@/lib/date";
 import StockPriceChart from "./StockPriceChart";
-import { calculateAverage, calculateEMA, calculateRSI } from "@/lib/calculate";
+import { calculateSma, calculateEMA, calculateRSI } from "@/lib/calculate";
 import RsiChart from "./RsiChart";
 import MacdChart from "./MacdChart";
 import VolumeChart from "./VolumeChart";
@@ -55,9 +55,9 @@ const formatPrice = (data: StockData, interval: string) => {
         name: formatTimestamp(timestamp, interval),
         openClose: [open, close],
         lowHigh: [low, high],
-        sma5: calculateAverage(sma5, 5),
-        sma10: calculateAverage(sma10, 10),
-        sma20: calculateAverage(sma20, 20),
+        sma5: calculateSma(sma5, 5),
+        sma10: calculateSma(sma10, 10),
+        sma20: calculateSma(sma20, 20),
         fill: close < open ? "#ef4444" : "#22c55e",
       };
     })
