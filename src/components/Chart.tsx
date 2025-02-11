@@ -16,7 +16,7 @@ export const Chart = async ({ code, interval }: { code: string; interval: string
       <RsiChart data={formatRsi(data, interval)} />
       <MacdChart data={formatMacd(data, interval)} />
       <VolumeChart data={formatVolume(data, interval)} />
-      <MadRateChart data={calculateMadRate(data, interval)} />
+      <MadRateChart data={formatMadRate(data, interval)} />
     </>
   );
 };
@@ -146,7 +146,7 @@ const formatVolume = (data: StockData, interval: string) => {
     .filter((item) => item !== null);
 };
 
-const calculateMadRate = (data: StockData, interval: string) => {
+const formatMadRate = (data: StockData, interval: string) => {
   const sma5: number[] = [];
   const sma25: number[] = [];
   return data.chart.result[0].timestamp
