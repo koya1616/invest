@@ -5,6 +5,7 @@ import { calculateSma, calculateEMA, calculateRSI } from "@/lib/calculate";
 import RsiChart from "./RsiChart";
 import MacdChart from "./MacdChart";
 import VolumeChart from "./VolumeChart";
+import MadRateChart from "./MadRateChart";
 
 export const Chart = async ({ code, interval }: { code: string; interval: string }) => {
   const data = await fetchChart(code, interval);
@@ -15,6 +16,7 @@ export const Chart = async ({ code, interval }: { code: string; interval: string
       <RsiChart data={formatRsi(data, interval)} />
       <MacdChart data={formatMacd(data, interval)} />
       <VolumeChart data={formatVolume(data, interval)} />
+      <MadRateChart data={calculateMadRate(data, interval)} />
     </>
   );
 };
@@ -139,6 +141,34 @@ const formatVolume = (data: StockData, interval: string) => {
       return {
         name: formatTimestamp(timestamp, interval),
         volume: volume,
+      };
+    })
+    .filter((item) => item !== null);
+};
+
+const calculateMadRate = (data: StockData, interval: string) => {
+  const sma5: number[] = [];
+  const sma25: number[] = [];
+  return data.chart.result[0].timestamp
+    .map((timestamp, index) => {
+      const { close } = getQuote(data.chart.result[0].indicators.quote[0], index);
+
+      if (close === 0) return null;
+
+      sma5.push(close);
+      sma25.push(close);
+      if (sma5.length > 5) sma5.shift();
+      if (sma25.length > 25) sma25.shift();
+
+      const calculatedSma5 = calculateSma(sma5, 5);
+      const calculatedSma25 = calculateSma(sma25, 25);
+
+      if (calculatedSma5 === null || calculatedSma25 === null) return null;
+
+      return {
+        name: formatTimestamp(timestamp, interval),
+        mad5: ((close - calculatedSma5) / calculatedSma5) * 100,
+        mad25: ((close - calculatedSma25) / calculatedSma25) * 100,
       };
     })
     .filter((item) => item !== null);
