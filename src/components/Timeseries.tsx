@@ -4,6 +4,7 @@ import { calculateEMA, calculateRSI, calculateSma } from "@/lib/calculate";
 import { fetchTimeseries, type MarketDataResponse } from "@/actions/timeseries";
 import RsiChart from "./RsiChart";
 import MacdChart from "./MacdChart";
+import VolumeChart from "./VolumeChart";
 
 const Timeseries = async ({ code, interval }: { code: string; interval: string }) => {
   const data = await fetchTimeseries(code, interval);
@@ -13,6 +14,7 @@ const Timeseries = async ({ code, interval }: { code: string; interval: string }
       <StockPriceChart data={formattedPrice.data} min={formattedPrice.min} max={formattedPrice.max} />
       <RsiChart data={formatRsi(data, interval)} />
       <MacdChart data={formatMacd(data, interval)} />
+      <VolumeChart data={formatVolume(data, interval)} />
     </>
   );
 };
@@ -75,6 +77,15 @@ const formatMacd = (data: MarketDataResponse, interval: string) => {
       macd: macd,
       signal: calculatedSignal,
       histogram: macd !== null && calculatedSignal !== null ? macd - calculatedSignal : null,
+    };
+  });
+};
+
+const formatVolume = (data: MarketDataResponse, interval: string) => {
+  return data.series.map((item) => {
+    return {
+      name: formatDateTimeString(item.dateTime_str, interval),
+      volume: item.volume,
     };
   });
 };
