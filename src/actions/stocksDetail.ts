@@ -70,43 +70,81 @@ interface Board {
 }
 
 interface ReferenceIndex {
+  /** 時価総額 (単位: 百万円) */
   totalPrice: string;
+  /** 時価総額の更新日時 (HH:mm形式) */
   totalPriceDateTime: string;
+  /** 発行済株式数 */
   sharesIssued: string;
+  /** 発行済株式数の基準日 (MM/dd形式) */
   sharesIssuedDate: string;
+  /** 配当利回り (%) */
   shareDividendYield: string;
+  /** 配当利回りの更新日時 (HH:mm形式) */
   shareDividendYieldDateTime: string;
+  /** 1株当たり配当金 (DPS: Dividend Per Share) */
   dps: string;
+  /** 1株当たり配当金の基準日 (YYYY/MM形式) */
   dpsDate: string;
+  /** 1株当たり配当金の詳細情報リンク */
   dpsLink: string;
+  /** PERの接頭辞 (連結/単体を示す) */
   perPrefix: string;
+  /** 株価収益率 (PER: Price Earnings Ratio) */
   per: string;
+  /** PERの更新日時 (HH:mm形式) */
   perDateTime: string;
+  /** PERの詳細情報リンク */
   perLink: string;
+  /** PBRの接頭辞 (連結/単体を示す) */
   pbrPrefix: string;
+  /** 株価純資産倍率 (PBR: Price Book-value Ratio) */
   pbr: string;
+  /** PBRの更新日時 (HH:mm形式) */
   pbrDateTime: string;
+  /** PBRの詳細情報リンク */
   pbrLink: string;
+  /** EPSの接頭辞 (連結/単体を示す) */
   epsPrefix: string;
+  /** 1株当たり利益 (EPS: Earnings Per Share) */
   eps: string;
+  /** EPSの基準日 (YYYY/MM形式) */
   epsDate: string;
+  /** BPSの接頭辞 (連結/単体を示す) */
   bpsPrefix: string;
+  /** 1株当たり純資産 (BPS: Book-value Per Share) */
   bps: string;
+  /** BPSの基準日 (YYYY/MM形式) */
   bpsDate: string;
+  /** ROEの接頭辞 (連結/単体を示す) */
   roePrefix: string;
+  /** 自己資本利益率 (ROE: Return on Equity) (%) */
   roe: string;
+  /** ROEの基準日 (YYYY/MM形式) */
   roeDate: string;
+  /** 自己資本比率の接頭辞 (連結/単体を示す) */
   equityRatioPrefix: string;
+  /** 自己資本比率 (%) */
   equityRatio: string;
+  /** 自己資本比率の基準日 (YYYY/MM形式) */
   equityRatioDate: string;
+  /** 最低購入金額 (単位: 円) */
   minPurchasePrice: string;
+  /** 最低購入金額の更新日時 (HH:mm形式) */
   minPurchasePriceDateTime: string;
+  /** 売買単位 (株) */
   shareUnit: string;
+  /** 年間高値 (円) */
   yearHighPrice: string;
+  /** 年間高値の日付 (YY/MM/dd形式) */
   yearHighPriceDate: string;
+  /** 現在値が年間高値かどうか */
   isYearHighPrice: boolean;
+  /** 年間安値 (円) */
   yearLowPrice: string;
+  /** 年間安値の日付 (YY/MM/dd形式) */
   yearLowPriceDate: string;
+  /** 現在値が年間安値かどうか */
   isYearLowPrice: boolean;
 }
 
