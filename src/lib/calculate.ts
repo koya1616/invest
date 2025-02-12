@@ -105,8 +105,8 @@ export const calculateEMA = (data: number[], period: number): number | null => {
 export const calculateRCI = (data: { timestamp: number; close: number }[], period: number): number | null => {
   if (data.length < period) return null;
 
-  const closeRanks = rank(data.map((d) => d.close));
-  const timestampRanks = rank(data.map((d) => d.timestamp));
+  const closeRanks = rank(data.slice(-period).map((d) => d.close));
+  const timestampRanks = rank(data.slice(-period).map((d) => d.timestamp));
 
   let sumD2 = 0;
   for (let i = 0; i < period; i++) {
