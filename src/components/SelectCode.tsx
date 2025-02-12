@@ -9,7 +9,7 @@ const SelectCode = ({ code }: { code: string }) => {
   return (
     <select
       value={code}
-      onChange={(e) => router.push(`/chart/${e.target.value}/1m`)}
+      onChange={(e) => router.push(`/timeseries/${e.target.value}/1`)}
       className="p-2 mb-4 border border-gray-300 rounded-md cursor-pointer"
     >
       <option value="">選択する</option>

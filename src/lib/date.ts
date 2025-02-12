@@ -1,14 +1,3 @@
-export const formatTimestamp = (timestamp: number, format: string) => {
-  const date = new Date(timestamp * 1000 + (new Date().getTimezoneOffset() + 9 * 60) * 60 * 1000);
-  if (format === "1m" || format === "5m") {
-    return formatTime(date);
-  }
-  if (format === "1d") {
-    return formatDate(date);
-  }
-  return formatDateTime(date);
-};
-
 export const formatDateTimeString = (dateStr: string, format: string) => {
   const date = new Date(dateStr);
   if (format === "1" || format === "5") {
