@@ -5,6 +5,7 @@ import { fetchTimeseries, type MarketDataResponse } from "@/actions/timeseries";
 import RsiChart from "./RsiChart";
 import MacdChart from "./MacdChart";
 import VolumeChart from "./VolumeChart";
+import MadRateChart from "./MadRateChart";
 
 const Timeseries = async ({ code, interval }: { code: string; interval: string }) => {
   const data = await fetchTimeseries(code, interval);
@@ -15,6 +16,7 @@ const Timeseries = async ({ code, interval }: { code: string; interval: string }
       <RsiChart data={formatRsi(data, interval)} />
       <MacdChart data={formatMacd(data, interval)} />
       <VolumeChart data={formatVolume(data, interval)} />
+      <MadRateChart data={formatMadRate(data, interval)} />
     </>
   );
 };
@@ -86,6 +88,25 @@ const formatVolume = (data: MarketDataResponse, interval: string) => {
     return {
       name: formatDateTimeString(item.dateTime_str, interval),
       volume: item.volume,
+    };
+  });
+};
+
+const formatMadRate = (data: MarketDataResponse, interval: string) => {
+  const sma: number[] = [];
+  return data.series.map((item) => {
+    const { close } = item;
+
+    sma.push(close);
+
+    const calculatedSma5 = calculateSma(sma, 5);
+    const calculatedSma25 = calculateSma(sma, 25);
+    if (calculatedSma5 === null || calculatedSma25 === null) return null;
+
+    return {
+      name: formatDateTimeString(item.dateTime_str, interval),
+      mad5: ((close - calculatedSma5) / calculatedSma5) * 100,
+      mad25: ((close - calculatedSma25) / calculatedSma25) * 100,
     };
   });
 };
