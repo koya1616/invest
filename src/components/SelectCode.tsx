@@ -1,5 +1,6 @@
 "use client";
 
+import { CODE } from "@/const/code";
 import { useRouter } from "next/navigation";
 
 export const SelectCode = ({ code }: { code: string }) => {
@@ -12,11 +13,11 @@ export const SelectCode = ({ code }: { code: string }) => {
       className="p-2 mb-4 border border-gray-300 rounded-md cursor-pointer"
     >
       <option value="">選択する</option>
-      <option value="7203">7203 トヨタ</option>
-      <option value="8306">8306 三菱ＵＦＪ</option>
-      <option value="8591">8591 オリックス</option>
-      <option value="9432">9432 NTT</option>
-      <option value="9433">9433 KDDI</option>
+      {CODE.map((item) => (
+        <option key={item.code} value={item.code}>
+          {item.code} {item.name}
+        </option>
+      ))}
     </select>
   );
 };
