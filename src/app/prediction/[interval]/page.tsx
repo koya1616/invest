@@ -16,12 +16,13 @@ export default async function Page({
       <ToHomeButton />
       <SelectInterval interval={p.interval} />
       <ReloadButton />
-
-      {CODE.map((item) => (
-        <Suspense key={item.code} fallback={<div>Loading...</div>}>
-          <Prediction code={item.code} interval={p.interval} />
-        </Suspense>
-      ))}
+      <div className="flex gap-2 flex-wrap justify-around">
+        {CODE.map((item) => (
+          <Suspense key={item.code} fallback={<div>Loading...</div>}>
+            <Prediction code={item.code} name={item.name} interval={p.interval} />
+          </Suspense>
+        ))}
+      </div>
     </>
   );
 }
