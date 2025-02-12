@@ -2,13 +2,13 @@
 
 import { useRouter } from "next/navigation";
 
-export const SelectInterval = ({ code, interval }: { code: string; interval: string }) => {
+export const SelectInterval = ({ code, interval }: { code?: string; interval: string }) => {
   const router = useRouter();
 
   return (
     <select
       value={interval}
-      onChange={(e) => router.push(`/chart/${code}/${e.target.value}`)}
+      onChange={(e) => router.push(code ? `/chart/${code}/${e.target.value}` : `/prediction/${e.target.value}`)}
       className="p-2 mb-4 border border-gray-300 rounded-md"
     >
       <option value="">選択する</option>
