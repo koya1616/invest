@@ -94,21 +94,23 @@ const formatVolume = (data: MarketDataResponse, interval: string) => {
 
 const formatMadRate = (data: MarketDataResponse, interval: string) => {
   const sma: number[] = [];
-  return data.series.map((item) => {
-    const { close } = item;
+  return data.series
+    .map((item) => {
+      const { close } = item;
 
-    sma.push(close);
+      sma.push(close);
 
-    const calculatedSma5 = calculateSma(sma, 5);
-    const calculatedSma25 = calculateSma(sma, 25);
-    if (calculatedSma5 === null || calculatedSma25 === null) return null;
+      const calculatedSma5 = calculateSma(sma, 5);
+      const calculatedSma25 = calculateSma(sma, 25);
+      if (calculatedSma5 === null || calculatedSma25 === null) return null;
 
-    return {
-      name: formatDateTimeString(item.dateTime_str, interval),
-      mad5: ((close - calculatedSma5) / calculatedSma5) * 100,
-      mad25: ((close - calculatedSma25) / calculatedSma25) * 100,
-    };
-  });
+      return {
+        name: formatDateTimeString(item.dateTime_str, interval),
+        mad5: ((close - calculatedSma5) / calculatedSma5) * 100,
+        mad25: ((close - calculatedSma25) / calculatedSma25) * 100,
+      };
+    })
+    .filter((item) => item !== null);
 };
 
 export default Timeseries;
