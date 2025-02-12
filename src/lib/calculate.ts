@@ -117,16 +117,11 @@ export const calculateRCI = (data: { timestamp: number; close: number }[], perio
   return (1 - (6 * sumD2) / (period * (period ** 2 - 1))) * 100;
 };
 
-const rank = (arr: number[]): number[] => {
-  const sortedIndices = arr
+const rank = (values: number[]): number[] => {
+  return values
     .map((value, index) => ({ value, index }))
-    .sort((a, b) => b.value - a.value)
-    .map((item) => item.index);
-
-  const ranks = Array(arr.length).fill(0);
-  sortedIndices.forEach((index, rank) => {
-    ranks[index] = rank + 1;
-  });
-
-  return ranks;
+    .sort((a, b) => a.value - b.value)
+    .map((item, rank) => ({ ...item, rank: rank + 1 }))
+    .sort((a, b) => a.index - b.index)
+    .map((item) => item.rank);
 };
