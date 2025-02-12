@@ -1,5 +1,6 @@
 import ReloadButton from "@/components/ReloadButton";
 import SelectInterval from "@/components/SelectInterval";
+import ToHomeButton from "@/components/ToHomeButton";
 
 export default async function Page({
   params,
@@ -9,6 +10,7 @@ export default async function Page({
   const p = await params;
   return (
     <>
+      <ToHomeButton />
       <SelectInterval interval={p.interval} />
       <ReloadButton />
     </>
