@@ -1,4 +1,5 @@
 import Chart from "@/components/Chart";
+import ReloadButton from "@/components/ReloadButton";
 import SelectCode from "@/components/SelectCode";
 import SelectInterval from "@/components/SelectInterval";
 import { Suspense } from "react";
@@ -10,12 +11,13 @@ export default async function Page({
 }) {
   const p = await params;
   return (
-    <div>
+    <>
       <SelectCode code={p.code} />
       <SelectInterval code={p.code} interval={p.interval} />
+      <ReloadButton />
       <Suspense fallback={<div>Loading...</div>}>
         <Chart code={p.code} interval={p.interval} />
       </Suspense>
-    </div>
+    </>
   );
 }
