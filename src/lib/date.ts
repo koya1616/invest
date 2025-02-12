@@ -9,6 +9,14 @@ export const formatTimestamp = (timestamp: number, format: string) => {
   return formatDateTime(date);
 };
 
+export const formatDateTimeString = (dateStr: string, format: string) => {
+  const date = new Date(dateStr);
+  if (format === "1" || format === "5") {
+    return formatTime(date);
+  }
+  return formatDate(date);
+};
+
 const formatTime = (date: Date) => {
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
