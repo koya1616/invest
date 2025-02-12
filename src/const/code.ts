@@ -1,7 +1,15 @@
 export const CODE = [
+  { code: "4519", name: "中外製薬" },
+  { code: "6501", name: "日立製作所" },
+  { code: "6758", name: "ソニー" },
   { code: "7203", name: "トヨタ" },
-  { code: "8306", name: "三菱ＵＦＪ" },
+  { code: "8001", name: "伊藤忠商事" },
+  { code: "8058", name: "三菱商事" },
+  { code: "8306", name: "三菱UFJ" },
+  { code: "8316", name: "三井住友FG" },
+  { code: "8411", name: "みずほFG" },
   { code: "8591", name: "オリックス" },
   { code: "9432", name: "NTT" },
   { code: "9433", name: "KDDI" },
+  { code: "9434", name: "ソフトバンク" },
 ];
