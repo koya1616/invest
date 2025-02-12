@@ -5,7 +5,7 @@ import { ComposedChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar, Line,
 import DataRangeSlider from "./DataRangeSlider";
 import { formatNumber } from "@/lib/util";
 
-export const VolumeChart = ({
+const VolumeChart = ({
   data,
 }: {
   data: {

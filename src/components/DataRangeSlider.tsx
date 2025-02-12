@@ -1,4 +1,4 @@
-export const DataRangeSlider = ({
+const DataRangeSlider = ({
   value,
   max,
   onChange,

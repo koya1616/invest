@@ -3,7 +3,7 @@ import { fetchStocksDetail } from "@/actions/stocksDetail";
 import { calculateRSI } from "@/lib/calculate";
 import { checkBuySignalOfRsi } from "@/lib/prediction/rsi";
 
-export const Prediction = async ({ code, name, interval }: { code: string; name: string; interval: string }) => {
+const Prediction = async ({ code, name, interval }: { code: string; name: string; interval: string }) => {
   const data = await fetchChart(code, interval);
   const detail = await fetchStocksDetail(code);
   const isBuySignalOfRsi = checkBuySignalOfRsi(calculateRsiAndPrices(data));

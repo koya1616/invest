@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ComposedChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar, Line, ResponsiveContainer } from "recharts";
 import DataRangeSlider from "./DataRangeSlider";
 
-export const StockPriceChart = ({
+const StockPriceChart = ({
   data,
   min,
   max,

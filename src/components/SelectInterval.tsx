@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-export const SelectInterval = ({ code, interval }: { code?: string; interval: string }) => {
+const SelectInterval = ({ code, interval }: { code?: string; interval: string }) => {
   const router = useRouter();
 
   return (

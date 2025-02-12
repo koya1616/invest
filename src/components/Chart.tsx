@@ -9,7 +9,7 @@ import MadRateChart from "./MadRateChart";
 import RciChart from "./RciChart";
 import StochasticChart from "./StochasticChart";
 
-export const Chart = async ({ code, interval }: { code: string; interval: string }) => {
+const Chart = async ({ code, interval }: { code: string; interval: string }) => {
   const data = await fetchChart(code, interval);
   const formattedPrice = formatPrice(data, interval);
   return (

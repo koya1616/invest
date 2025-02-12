@@ -3,7 +3,7 @@
 import { CODE } from "@/const/code";
 import { useRouter } from "next/navigation";
 
-export const SelectCode = ({ code }: { code: string }) => {
+const SelectCode = ({ code }: { code: string }) => {
   const router = useRouter();
 
   return (
