@@ -1,5 +1,5 @@
 import SelectCode from "@/components/SelectCode";
-import SelectNewInterval from "@/components/SelectNewInterval";
+import SelectInterval from "@/components/SelectInterval";
 
 export default function Page() {
   return (
@@ -7,7 +7,7 @@ export default function Page() {
       <p>チャート画面</p>
       <SelectCode code="" />
       <p>予想画面</p>
-      <SelectNewInterval interval="" />
+      <SelectInterval interval="" />
     </>
   );
 }
