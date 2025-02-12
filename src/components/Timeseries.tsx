@@ -7,6 +7,7 @@ import MacdChart from "./MacdChart";
 import VolumeChart from "./VolumeChart";
 import MadRateChart from "./MadRateChart";
 import RciChart from "./RciChart";
+import StochasticChart from "./StochasticChart";
 
 const Timeseries = async ({ code, interval }: { code: string; interval: string }) => {
   const data = await fetchTimeseries(code, interval);
@@ -19,6 +20,7 @@ const Timeseries = async ({ code, interval }: { code: string; interval: string }
       <VolumeChart data={formatVolume(data, interval)} />
       <MadRateChart data={formatMadRate(data, interval)} />
       <RciChart data={formatRci(data, interval)} />
+      <StochasticChart data={formatStochastic(data, interval)} />
     </>
   );
 };
@@ -131,6 +133,35 @@ const formatRci = (data: MarketDataResponse, interval: string) => {
       };
     })
     .filter((item) => item.rci9 !== null);
+};
+
+const formatStochastic = (data: MarketDataResponse, interval: string) => {
+  const highs: number[] = [];
+  const lows: number[] = [];
+  const pastKValues: number[] = [];
+  const K = 5;
+  const D = 3;
+  return data.series
+    .map((item) => {
+      const { high, low, close } = item;
+
+      highs.push(high);
+      lows.push(low);
+
+      const max = Math.max(...highs.slice(-K));
+      const min = Math.min(...lows.slice(-K));
+
+      const k = ((close - min) / (max - min)) * 100;
+      pastKValues.push(k);
+      if (pastKValues.length > D) pastKValues.shift();
+
+      return {
+        name: formatDateTimeString(item.dateTime_str, interval),
+        k,
+        d: pastKValues.reduce((sum, val) => sum + val, 0) / D,
+      };
+    })
+    .filter((item) => item !== null);
 };
 
 export default Timeseries;
