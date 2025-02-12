@@ -1,4 +1,5 @@
 import Chart from "@/components/Chart";
+import Loading from "@/components/Loading";
 import ReloadButton from "@/components/ReloadButton";
 import SelectCode from "@/components/SelectCode";
 import SelectInterval from "@/components/SelectInterval";
@@ -17,7 +18,7 @@ export default async function Page({
       <SelectCode code={p.code} />
       <SelectInterval code={p.code} interval={p.interval} />
       <ReloadButton />
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<Loading />}>
         <Chart code={p.code} interval={p.interval} />
       </Suspense>
     </>
