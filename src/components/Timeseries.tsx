@@ -1,8 +1,9 @@
 import { formatDateTimeString } from "@/lib/date";
 import StockPriceChart from "./StockPriceChart";
-import { calculateRSI, calculateSma } from "@/lib/calculate";
+import { calculateEMA, calculateRSI, calculateSma } from "@/lib/calculate";
 import { fetchTimeseries, type MarketDataResponse } from "@/actions/timeseries";
 import RsiChart from "./RsiChart";
+import MacdChart from "./MacdChart";
 
 const Timeseries = async ({ code, interval }: { code: string; interval: string }) => {
   const data = await fetchTimeseries(code, interval);
@@ -11,6 +12,7 @@ const Timeseries = async ({ code, interval }: { code: string; interval: string }
     <>
       <StockPriceChart data={formattedPrice.data} min={formattedPrice.min} max={formattedPrice.max} />
       <RsiChart data={formatRsi(data, interval)} />
+      <MacdChart data={formatMacd(data, interval)} />
     </>
   );
 };
@@ -48,6 +50,31 @@ const formatRsi = (data: MarketDataResponse, interval: string) => {
     return {
       name: formatDateTimeString(item.dateTime_str, interval),
       rsi: calculateRSI(rsi, 14),
+    };
+  });
+};
+
+const formatMacd = (data: MarketDataResponse, interval: string) => {
+  const ema: number[] = [];
+  const signal: number[] = [];
+  return data.series.map((item) => {
+    const { close } = item;
+
+    ema.push(close);
+
+    const calculatedEma12 = calculateEMA(ema, 12);
+    const calculatedEma26 = calculateEMA(ema, 26);
+    const macd = calculatedEma12 !== null && calculatedEma26 !== null ? calculatedEma12 - calculatedEma26 : null;
+
+    if (macd !== null) {
+      signal.push(macd);
+    }
+    const calculatedSignal = calculateEMA(signal, 9);
+    return {
+      name: formatDateTimeString(item.dateTime_str, interval),
+      macd: macd,
+      signal: calculatedSignal,
+      histogram: macd !== null && calculatedSignal !== null ? macd - calculatedSignal : null,
     };
   });
 };
