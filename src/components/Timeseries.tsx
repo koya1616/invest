@@ -1,11 +1,12 @@
 import { formatDateTimeString } from "@/lib/date";
 import StockPriceChart from "./StockPriceChart";
-import { calculateEMA, calculateRSI, calculateSma } from "@/lib/calculate";
+import { calculateEMA, calculateRCI, calculateRSI, calculateSma } from "@/lib/calculate";
 import { fetchTimeseries, type MarketDataResponse } from "@/actions/timeseries";
 import RsiChart from "./RsiChart";
 import MacdChart from "./MacdChart";
 import VolumeChart from "./VolumeChart";
 import MadRateChart from "./MadRateChart";
+import RciChart from "./RciChart";
 
 const Timeseries = async ({ code, interval }: { code: string; interval: string }) => {
   const data = await fetchTimeseries(code, interval);
@@ -17,6 +18,7 @@ const Timeseries = async ({ code, interval }: { code: string; interval: string }
       <MacdChart data={formatMacd(data, interval)} />
       <VolumeChart data={formatVolume(data, interval)} />
       <MadRateChart data={formatMadRate(data, interval)} />
+      <RciChart data={formatRci(data, interval)} />
     </>
   );
 };
@@ -111,6 +113,24 @@ const formatMadRate = (data: MarketDataResponse, interval: string) => {
       };
     })
     .filter((item) => item !== null);
+};
+
+const formatRci = (data: MarketDataResponse, interval: string) => {
+  const closeArray: { timestamp: number; close: number }[] = [];
+  return data.series
+    .map((item) => {
+      const { dateTime, close } = item;
+
+      closeArray.push({ timestamp: dateTime, close });
+
+      return {
+        name: formatDateTimeString(item.dateTime_str, interval),
+        rci9: calculateRCI(closeArray, 9),
+        rci14: calculateRCI(closeArray, 14),
+        rci25: calculateRCI(closeArray, 25),
+      };
+    })
+    .filter((item) => item.rci9 !== null);
 };
 
 export default Timeseries;
