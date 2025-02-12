@@ -1,10 +1,10 @@
-import { fetchChart, type Quote, type StockData } from "@/actions/chart";
 import { fetchStocksDetail } from "@/actions/stocksDetail";
+import { fetchTimeseries, type MarketDataResponse } from "@/actions/timeseries";
 import { calculateRSI } from "@/lib/calculate";
 import { checkBuySignalOfRsi } from "@/lib/prediction/rsi";
 
 const Prediction = async ({ code, name, interval }: { code: string; name: string; interval: string }) => {
-  const data = await fetchChart(code, interval);
+  const data = await fetchTimeseries(code, interval);
   const detail = await fetchStocksDetail(code);
   const isBuySignalOfRsi = checkBuySignalOfRsi(calculateRsiAndPrices(data));
   return (
@@ -48,26 +48,15 @@ const Prediction = async ({ code, name, interval }: { code: string; name: string
   );
 };
 
-const getQuote = (quote: Quote, index: number) => {
-  return {
-    open: Math.floor(quote.open[index] * 10) / 10,
-    close: Math.floor(quote.close[index] * 10) / 10,
-    high: Math.floor(quote.high[index] * 10) / 10,
-    low: Math.floor(quote.low[index] * 10) / 10,
-    volume: quote.volume[index],
-  };
-};
-
-const calculateRsiAndPrices = (data: StockData) => {
+const calculateRsiAndPrices = (data: MarketDataResponse) => {
   const closeArray: number[] = [];
-  const rsi = data.chart.result[0].timestamp
-    .map((_, index) => {
-      const { close } = getQuote(data.chart.result[0].indicators.quote[0], index);
+  const rsi = data.series
+    .map((item) => {
+      const { close } = item;
 
-      if (close === 0) return null;
       closeArray.push(close);
 
-      return calculateRSI(closeArray.slice(-15), 14);
+      return calculateRSI(closeArray, 14);
     })
     .filter((item) => item !== null);
   return { rsi, prices: closeArray };
