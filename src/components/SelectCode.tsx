@@ -13,6 +13,8 @@ export const SelectCode = ({ code }: { code: string }) => {
     >
       <option value="">選択する</option>
       <option value="7203">7203 トヨタ</option>
+      <option value="8306">8306 三菱ＵＦＪ</option>
+      <option value="8591">8591 オリックス</option>
       <option value="9432">9432 NTT</option>
       <option value="9433">9433 KDDI</option>
     </select>
