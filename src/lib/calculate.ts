@@ -17,8 +17,8 @@
  * - それ以外の場合は計算されたSMA値
  */
 export const calculateSma = (prices: number[], period: number): number | null => {
-  if (prices.length !== period) return null;
-  return prices.reduce((acc, current) => acc + current, 0) / period;
+  if (prices.length < period) return null;
+  return prices.slice(-period).reduce((acc, current) => acc + current, 0) / period;
 };
 
 /**
