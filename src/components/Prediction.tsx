@@ -4,11 +4,11 @@ import { checkBuySignalOfRsi } from "@/lib/prediction/rsi";
 
 export const Prediction = async ({ code, interval }: { code: string; interval: string }) => {
   const data = await fetchChart(code, interval);
-  const isSignal = checkBuySignalOfRsi(calculateRsiAndPrices(data));
+  const isBuySignalOfRsi = checkBuySignalOfRsi(calculateRsiAndPrices(data));
   return (
     <div className="border p-2 w-5/6 m-auto mb-2">
       <p>{code}</p>
-      <p>RSI: {isSignal && <span className="text-red-500">↑</span>}</p>
+      <p>RSI: {isBuySignalOfRsi && <span className="text-red-500">↑</span>}</p>
     </div>
   );
 };
