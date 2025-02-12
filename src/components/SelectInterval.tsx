@@ -9,7 +9,7 @@ export const SelectInterval = ({ code, interval }: { code?: string; interval: st
     <select
       value={interval}
       onChange={(e) => router.push(code ? `/chart/${code}/${e.target.value}` : `/prediction/${e.target.value}`)}
-      className="p-2 mb-4 border border-gray-300 rounded-md"
+      className="p-2 mb-4 border border-gray-300 rounded-md cursor-pointer"
     >
       <option value="">選択する</option>
       <option value="1m">1分足</option>
