@@ -1,7 +1,8 @@
 import { formatDateTimeString } from "@/lib/date";
 import StockPriceChart from "./StockPriceChart";
-import { calculateSma } from "@/lib/calculate";
+import { calculateRSI, calculateSma } from "@/lib/calculate";
 import { fetchTimeseries, type MarketDataResponse } from "@/actions/timeseries";
+import RsiChart from "./RsiChart";
 
 const Timeseries = async ({ code, interval }: { code: string; interval: string }) => {
   const data = await fetchTimeseries(code, interval);
@@ -9,6 +10,7 @@ const Timeseries = async ({ code, interval }: { code: string; interval: string }
   return (
     <>
       <StockPriceChart data={formattedPrice.data} min={formattedPrice.min} max={formattedPrice.max} />
+      <RsiChart data={formatRsi(data, interval)} />
     </>
   );
 };
@@ -34,6 +36,20 @@ const formatPrice = (data: MarketDataResponse, interval: string) => {
   });
 
   return { data: formattedData, min: Math.min(...sma), max: Math.max(...sma) };
+};
+
+const formatRsi = (data: MarketDataResponse, interval: string) => {
+  const rsi: number[] = [];
+  return data.series.map((item) => {
+    const { close } = item;
+
+    rsi.push(close);
+
+    return {
+      name: formatDateTimeString(item.dateTime_str, interval),
+      rsi: calculateRSI(rsi, 14),
+    };
+  });
 };
 
 export default Timeseries;
