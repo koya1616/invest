@@ -8,34 +8,34 @@ const Prediction = async ({ code, name, interval }: { code: string; name: string
   const detail = await fetchStocksDetail(code);
   const isBuySignalOfRsi = checkBuySignalOfRsi(calculateRsiAndPrices(data));
   return (
-    <div className={`rounded-lg w-48 p-3 ${isBuySignalOfRsi ? "border-red-500" : "border-gray-200"} border`}>
+    <div className={`rounded-lg w-44 p-2 ${isBuySignalOfRsi ? "border-red-500" : "border-gray-200"} border`}>
       <h2 className="font-bold mb-2">
         {code} <span className="text-xs">{name}</span>
       </h2>
 
-      <div className="space-y-2 text-xs">
-        <div className="flex justify-between items-center border-b pb-1">
+      <div className="space-y-1 text-xs">
+        <div className="flex justify-between items-center border-b">
           <span>配当利回り</span>
           <span>{detail.referenceIndex.shareDividendYield}%</span>
         </div>
 
-        <div className="flex justify-between items-center border-b pb-1">
-          <span>1株当たり配当金</span>
+        <div className="flex justify-between items-center border-b">
+          <span>DPS</span>
           <span>{detail.referenceIndex.dps}円</span>
         </div>
 
-        <div className="flex justify-between items-center border-b pb-1">
+        <div className="flex justify-between items-center border-b">
           <span>PER</span>
           <span>{detail.referenceIndex.per}</span>
         </div>
 
-        <div className="flex justify-between items-center border-b pb-1">
+        <div className="flex justify-between items-center border-b">
           <span>PBR</span>
           <span>{detail.referenceIndex.pbr}</span>
         </div>
 
-        <div className="flex justify-between items-center border-b pb-1">
-          <span>自己資本比率</span>
+        <div className="flex justify-between items-center border-b">
+          <span>自己資本率</span>
           <span>{detail.referenceIndex.equityRatio}%</span>
         </div>
 
