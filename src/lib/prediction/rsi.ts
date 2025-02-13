@@ -5,8 +5,8 @@
  * @returns オーバーソールドからの転換が検出された場合はtrue、それ以外の場合はfalseを返します。
  */
 const detectOversoldReversal = (rsi: number[]): boolean => {
-  const latest = rsi[rsi.length - 1];
-  const previous = rsi[rsi.length - 2];
+  const latest = rsi.slice(-1)[0];
+  const previous = rsi.slice(-2)[0];
   return previous <= 30 && latest > previous;
 };
 
