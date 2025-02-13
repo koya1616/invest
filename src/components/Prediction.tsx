@@ -6,7 +6,7 @@ import { checkBuySignalOfRsi } from "@/lib/prediction/rsi";
 const Prediction = async ({ code, name, interval }: { code: string; name: string; interval: string }) => {
   const data = await fetchTimeseries(code, interval);
   const detail = await fetchStocksDetail(code);
-  const isBuySignalOfRsi = checkBuySignalOfRsi(calculateRsiAndPrices(data));
+  const isBuySignalOfRsi = checkBuySignalOfRsi(formatRsiAndPrices(data));
   return (
     <div className={`rounded-lg w-44 p-2 ${isBuySignalOfRsi ? "border-red-500" : "border-gray-200"} border`}>
       <h2 className="font-bold mb-2">
@@ -48,7 +48,7 @@ const Prediction = async ({ code, name, interval }: { code: string; name: string
   );
 };
 
-const calculateRsiAndPrices = (data: MarketDataResponse) => {
+const formatRsiAndPrices = (data: MarketDataResponse) => {
   const closeArray: number[] = [];
   const rsi = data.series
     .map((item) => {
