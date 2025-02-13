@@ -4,7 +4,7 @@ const Revenue = async ({ code, name }: { code: string; name: string }) => {
   const revenue = await fetchRevenue(code);
   const tbody = revenue.shimen_results.slice(1).filter((i) => !i.includes("ー"));
   return (
-    <div className="rounded-lg p-1 border-gray-200 border">
+    <div className="rounded-lg p-1 border-gray-200 border overflow-x-auto">
       <h2 className="font-bold mb-1">
         {code} {name}
       </h2>
