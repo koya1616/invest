@@ -1,12 +1,14 @@
 import { fetchStocksDetail } from "@/actions/stocksDetail";
 import { fetchTimeseries, type MarketDataResponse } from "@/actions/timeseries";
 import { calculateRSI } from "@/lib/calculate";
+import { checkBuySignalOfOpenClose } from "@/lib/prediction/openClose";
 import { checkBuySignalOfRsi } from "@/lib/prediction/rsi";
 
 const Prediction = async ({ code, name, interval }: { code: string; name: string; interval: string }) => {
   const data = await fetchTimeseries(code, interval);
   const detail = await fetchStocksDetail(code);
   const isBuySignalOfRsi = checkBuySignalOfRsi(formatRsiAndPrices(data));
+  const isBuySignalOfOpenClose = checkBuySignalOfOpenClose(formatOpenClose(data), 5);
   return (
     <div className={`rounded-lg w-44 p-2 ${isBuySignalOfRsi ? "border-red-500" : "border-gray-200"} border`}>
       <h2 className="font-bold mb-2">
@@ -39,9 +41,14 @@ const Prediction = async ({ code, name, interval }: { code: string; name: string
           <span>{detail.referenceIndex.equityRatio}%</span>
         </div>
 
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center border-b">
           <span>RSI</span>
           <span>{isBuySignalOfRsi && <span className="text-red-500">↑</span>}</span>
+        </div>
+
+        <div className="flex justify-between items-center">
+          <span>OpCl</span>
+          <span>{isBuySignalOfOpenClose && <span className="text-red-500">↑</span>}</span>
         </div>
       </div>
     </div>
@@ -60,6 +67,10 @@ const formatRsiAndPrices = (data: MarketDataResponse) => {
     })
     .filter((item) => item !== null);
   return { rsi, prices: closeArray };
+};
+
+const formatOpenClose = (data: MarketDataResponse) => {
+  return { opens: data.series.map((i) => i.open), closes: data.series.map((i) => i.close) };
 };
 
 export default Prediction;
