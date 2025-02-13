@@ -15,6 +15,10 @@ const detectOversoldReversal = (rsi: number[]): boolean => {
  *
  * @param rsi - RSIの値の配列。配列の最後の5つの値を使用してトレンドラインのブレイクを検出します。
  * @returns トレンドラインのブレイクが検出された場合はtrue、それ以外の場合はfalseを返します。
+ *
+ * @remarks
+ * この関数は、RSIの最後の5つの値をチェックし、最後の値が30を超えているかつ
+ * それ以前の値が30未満である場合にトレンドラインのブレイクを検出します。
  */
 const detectTrendlineBreak = (rsi: number[]): boolean => {
   const recentValues = rsi.slice(-5);
@@ -35,6 +39,10 @@ const detectTrendlineBreak = (rsi: number[]): boolean => {
  * @param rsi - RSI（相対力指数）の数値配列。
  * @param priceArray - 価格の数値配列。
  * @returns ブルリッシュダイバージェンスが検出された場合はtrue、それ以外の場合はfalseを返します。
+ *
+ * @remarks
+ * この関数は、RSIの最後の5つの値と価格の最後の5つの値をチェックし、
+ * 価格がRSIよりも低い値を持つ場合にブルリッシュダイバージェンスを検出します。
  */
 const detectBullishDivergence = (rsi: number[], prices: number[]): boolean => {
   const last5RSI = rsi.slice(-5);
@@ -73,7 +81,8 @@ const detectDoubleBottom = (rsi: number[]): boolean => {
   }
 
   if (bottoms.length >= 2) {
-    const bottomDiff = Math.abs(bottoms[0] - bottoms[1]);
+    const latestBottoms = bottoms.slice(-2);
+    const bottomDiff = Math.abs(latestBottoms[0] - latestBottoms[1]);
     if (bottomDiff < 5) return true;
   }
 
