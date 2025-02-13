@@ -60,11 +60,6 @@ const isPositiveDivergence = (mad: number[], prices: number[]): boolean => {
 };
 
 export const checkBuySignalOfMadRate = (data: { shortMad: number[]; longMad: number[]; prices: number[] }): boolean => {
-  console.log(
-    isGoldenCross(data.shortMad, data.longMad),
-    isOversoldRebound(data.shortMad),
-    isPositiveDivergence(data.shortMad, data.prices),
-  );
   return (
     isGoldenCross(data.shortMad, data.longMad) ||
     isOversoldRebound(data.shortMad) ||
