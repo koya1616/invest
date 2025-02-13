@@ -15,9 +15,9 @@ const Header = ({ code, interval }: { code: string; interval: string }) => {
   };
   return (
     <header className="w-full bg-white shadow-sm border-b border-gray-200 mb-2">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div className="px-4 h-16 flex items-center justify-between">
         <button type="button" onClick={toggleMenu} className="sm:hidden p-2 rounded-md" aria-label="Menu">
-          <div className="w-6 h-5 relative flex flex-col justify-between">
+          <div className="w-6 h-5 flex flex-col justify-between">
             <span className="h-0.5 bg-gray-600" />
             <span className="h-0.5 bg-gray-600" />
             <span className="h-0.5 bg-gray-600" />
