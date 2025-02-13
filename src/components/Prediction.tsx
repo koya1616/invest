@@ -60,6 +60,7 @@ const formatRsiAndPrices = (data: MarketDataResponse) => {
   const rsi = data.series
     .map((item) => {
       const { close } = item;
+      if (close === null) return null;
 
       closeArray.push(close);
 
@@ -70,7 +71,16 @@ const formatRsiAndPrices = (data: MarketDataResponse) => {
 };
 
 const formatOpenClose = (data: MarketDataResponse) => {
-  return { opens: data.series.map((i) => i.open), closes: data.series.map((i) => i.close) };
+  const opens: number[] = [];
+  const closes: number[] = [];
+  for (const item of data.series) {
+    const { open, close } = item;
+    if (close === null) continue;
+
+    opens.push(open);
+    closes.push(close);
+  }
+  return { opens, closes };
 };
 
 export default Prediction;

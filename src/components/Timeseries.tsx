@@ -27,73 +27,85 @@ const Timeseries = async ({ code, interval }: { code: string; interval: string }
 
 const formatPrice = (data: MarketDataResponse, interval: string) => {
   const sma: number[] = [];
-  const formattedData = data.series.map((item) => {
-    const { open, close, high, low } = item;
+  const formattedData = data.series
+    .map((item) => {
+      const { open, close, high, low } = item;
+      if (close === null) return null;
 
-    sma.push(close);
+      sma.push(close);
 
-    return {
-      name: formatDateTimeString(item.dateTime_str, interval),
-      openClose: [open, close],
-      lowHigh: [low, high],
-      sma5: calculateSma(sma, 5),
-      sma10: calculateSma(sma, 10),
-      sma20: calculateSma(sma, 20),
-      sma25: calculateSma(sma, 25),
-      sma75: calculateSma(sma, 75),
-      fill: close < open ? "#ef4444" : "#22c55e",
-    };
-  });
+      return {
+        name: formatDateTimeString(item.dateTime_str, interval),
+        openClose: [open, close],
+        lowHigh: [low, high],
+        sma5: calculateSma(sma, 5),
+        sma10: calculateSma(sma, 10),
+        sma20: calculateSma(sma, 20),
+        sma25: calculateSma(sma, 25),
+        sma75: calculateSma(sma, 75),
+        fill: close < open ? "#ef4444" : "#22c55e",
+      };
+    })
+    .filter((item) => item !== null);
 
   return { data: formattedData, min: Math.min(...sma), max: Math.max(...sma) };
 };
 
 const formatRsi = (data: MarketDataResponse, interval: string) => {
   const rsi: number[] = [];
-  return data.series.map((item) => {
-    const { close } = item;
+  return data.series
+    .map((item) => {
+      const { close } = item;
+      if (close === null) return null;
 
-    rsi.push(close);
+      rsi.push(close);
 
-    return {
-      name: formatDateTimeString(item.dateTime_str, interval),
-      rsi: calculateRSI(rsi, 14),
-    };
-  });
+      return {
+        name: formatDateTimeString(item.dateTime_str, interval),
+        rsi: calculateRSI(rsi, 14),
+      };
+    })
+    .filter((item) => item !== null);
 };
 
 const formatMacd = (data: MarketDataResponse, interval: string) => {
   const ema: number[] = [];
   const signal: number[] = [];
-  return data.series.map((item) => {
-    const { close } = item;
+  return data.series
+    .map((item) => {
+      const { close } = item;
+      if (close === null) return null;
 
-    ema.push(close);
+      ema.push(close);
 
-    const calculatedEma12 = calculateEMA(ema, 12);
-    const calculatedEma26 = calculateEMA(ema, 26);
-    const macd = calculatedEma12 !== null && calculatedEma26 !== null ? calculatedEma12 - calculatedEma26 : null;
+      const calculatedEma12 = calculateEMA(ema, 12);
+      const calculatedEma26 = calculateEMA(ema, 26);
+      const macd = calculatedEma12 !== null && calculatedEma26 !== null ? calculatedEma12 - calculatedEma26 : null;
 
-    if (macd !== null) {
-      signal.push(macd);
-    }
-    const calculatedSignal = calculateEMA(signal, 9);
-    return {
-      name: formatDateTimeString(item.dateTime_str, interval),
-      macd: macd,
-      signal: calculatedSignal,
-      histogram: macd !== null && calculatedSignal !== null ? macd - calculatedSignal : null,
-    };
-  });
+      if (macd !== null) {
+        signal.push(macd);
+      }
+      const calculatedSignal = calculateEMA(signal, 9);
+      return {
+        name: formatDateTimeString(item.dateTime_str, interval),
+        macd: macd,
+        signal: calculatedSignal,
+        histogram: macd !== null && calculatedSignal !== null ? macd - calculatedSignal : null,
+      };
+    })
+    .filter((item) => item !== null);
 };
 
 const formatVolume = (data: MarketDataResponse, interval: string) => {
-  return data.series.map((item) => {
-    return {
-      name: formatDateTimeString(item.dateTime_str, interval),
-      volume: item.volume,
-    };
-  });
+  return data.series
+    .map((item) => {
+      if (item.close === null) return null;
+      return {
+        name: formatDateTimeString(item.dateTime_str, interval),
+        volume: item.volume,
+      };
+    })
+    .filter((item) => item !== null);
 };
 
 const formatMadRate = (data: MarketDataResponse, interval: string) => {
@@ -101,6 +113,7 @@ const formatMadRate = (data: MarketDataResponse, interval: string) => {
   return data.series
     .map((item) => {
       const { close } = item;
+      if (close === null) return null;
 
       sma.push(close);
 
@@ -122,6 +135,7 @@ const formatRci = (data: MarketDataResponse, interval: string) => {
   return data.series
     .map((item) => {
       const { dateTime, close } = item;
+      if (close === null) return null;
 
       closeArray.push({ timestamp: dateTime, close });
 
@@ -132,6 +146,7 @@ const formatRci = (data: MarketDataResponse, interval: string) => {
         rci25: calculateRCI(closeArray, 25),
       };
     })
+    .filter((item) => item !== null)
     .filter((item) => item.rci9 !== null);
 };
 
@@ -144,6 +159,7 @@ const formatStochastic = (data: MarketDataResponse, interval: string) => {
   return data.series
     .map((item) => {
       const { high, low, close } = item;
+      if (close === null) return null;
 
       highs.push(high);
       lows.push(low);
