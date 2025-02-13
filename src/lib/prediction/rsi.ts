@@ -98,14 +98,11 @@ const detectDoubleBottom = (rsi: number[]): boolean => {
  * @returns サポートバウンスのシグナルが検出された場合はtrue、それ以外の場合はfalseを返します。
  *
  * @remarks
- * - `support` は配列の最初の要素から最後の3つの要素を除いた範囲の最小値です。
- * - `latest` は配列の最後の要素です。
- * - `previous` は配列の最後から2番目の要素です。
- * - `previous` が `support + 2` 以下であり、かつ `latest` が `previous` より大きい場合、シグナルが検出されます。
- * - シグナルの強度は `(latest - previous) / 5` の最小値と1の最小値です。
+ * この関数は、RSIの最後の10個の値をチェックし、最小値をサポートとして検出します。
+ * サポート値よりも2ポイント以上高い値でRSIが上昇した場合、サポートバウンスのシグナルが発生します。
  */
 const detectSupportBounce = (rsi: number[]): boolean => {
-  const support = Math.min(...rsi.slice(0, -3));
+  const support = Math.min(...rsi.slice(0, -2));
   const latest = rsi[rsi.length - 1];
   const previous = rsi[rsi.length - 2];
   return previous <= support + 2 && latest > previous;
@@ -122,7 +119,6 @@ const detectSupportBounce = (rsi: number[]): boolean => {
  * @remarks
  * - 5日間と13日間の移動平均線を計算し、クロスを検出します
  * - 5日間のMAが13日間のMAを下回り、次の日に5日間のMAが13日間のMAを上回った場合、シグナルが発生します
- * - シグナルの強さは、5日間のMAと13日間のMAの差を5で割った値と1の最小値です
  */
 const detectMACross = (rsi: number[]): boolean => {
   const ma5 = calculateMA(rsi, 5);
@@ -134,32 +130,6 @@ const detectMACross = (rsi: number[]): boolean => {
   const latestMa13 = ma13[ma13.length - 1];
 
   return previousMa5 <= previousMa13 && latestMa5 > latestMa13;
-};
-
-/**
- * RSI配列からWボトムシグナルを検出します。
- *
- * @param rsi -
- * - RSI値の配列
- * - 配列は最低でも15個の要素を持つ必要があります
- * @returns Wボトムシグナルが検出された場合はtrue、それ以外の場合はfalseを返します。
- *
- * @remarks
- * この関数は、RSI配列の最後の15個の値をチェックし、Wボトムパターンを検出します。
- * Wボトムパターンは、2つの底値があり、2つ目の底値が1つ目の底値よりも高く、
- * かつその差が7未満である場合に検出されます。底値は30未満である必要があります。
- */
-const detectWBottom = (rsi: number[]): boolean => {
-  const recentValues = rsi.slice(-15);
-  const bottoms: number[] = [];
-
-  for (let i = 1; i < recentValues.length - 1; i++) {
-    if (recentValues[i] < recentValues[i - 1] && recentValues[i] < recentValues[i + 1] && recentValues[i] < 30) {
-      bottoms.push(recentValues[i]);
-    }
-  }
-
-  return bottoms.length >= 2 && bottoms[1] > bottoms[0] && Math.abs(bottoms[1] - bottoms[0]) < 7;
 };
 
 /**
@@ -178,7 +148,6 @@ export const checkBuySignalOfRsi = (data: { rsi: number[]; prices: number[] }): 
     detectDoubleBottom(data.rsi),
     detectSupportBounce(data.rsi),
     detectMACross(data.rsi),
-    detectWBottom(data.rsi),
   ];
 
   return signals.reduce((count, value) => (value ? count + 1 : count), 0) >= 2;
