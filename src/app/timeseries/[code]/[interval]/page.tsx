@@ -1,11 +1,8 @@
+import Header from "@/components/Header";
 import Loading from "@/components/Loading";
 import Prediction from "@/components/Prediction";
-import ReloadButton from "@/components/ReloadButton";
 import Revenue from "@/components/Revenue";
-import SelectCode from "@/components/SelectCode";
-import SelectInterval from "@/components/SelectInterval";
 import Timeseries from "@/components/Timeseries";
-import ToHomeButton from "@/components/ToHomeButton";
 import { Suspense } from "react";
 
 export default async function Page({
@@ -16,10 +13,7 @@ export default async function Page({
   const p = await params;
   return (
     <>
-      <ToHomeButton />
-      <SelectCode code={p.code} />
-      <SelectInterval code={p.code} interval={p.interval} />
-      <ReloadButton />
+      <Header code={p.code} interval={p.interval} />
       <div className="flex flex-wrap justify-around">
         <Suspense fallback={<Loading />}>
           <Revenue code={p.code} name={""} />

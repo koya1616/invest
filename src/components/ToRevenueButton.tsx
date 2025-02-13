@@ -8,7 +8,7 @@ const ToRevenueButton = () => {
     <button
       type="button"
       onClick={() => router.push("/revenue")}
-      className="border-2 border-blue-500 text-blue-500 py-2 px-4 rounded cursor-pointer block"
+      className="border border-blue-500 text-blue-500 px-4 py-2 rounded cursor-pointer block"
     >
       業績
     </button>
