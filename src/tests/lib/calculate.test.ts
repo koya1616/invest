@@ -83,3 +83,30 @@ describe("calculateEMA", () => {
     expect(calculateEMA(data, period)).toBeNull();
   });
 });
+
+describe("calculateRCI", () => {
+  it("正しくRCIを計算できること", () => {
+    const data = [105, 102, 108, 103, 106];
+    expect(calculateRCI(data, 5)).toBeCloseTo(30);
+  });
+
+  it("データの長さが期間より短い場合はnullを返すこと", () => {
+    const data = [100, 110];
+    expect(calculateRCI(data, 3)).toBeNull();
+  });
+
+  it("完全に上昇する場合は100を返すこと", () => {
+    const data = [100, 110, 120, 130, 140];
+    expect(calculateRCI(data, 5)).toBeCloseTo(100, 1);
+  });
+
+  it("完全に下降する場合は100を返すこと", () => {
+    const data = [140, 130, 120, 110, 100];
+    expect(calculateRCI(data, 5)).toBeCloseTo(-100, 1);
+  });
+
+  it("価格が一定の場合は50を返すこと", () => {
+    const data = [100, 100, 100, 100, 100];
+    expect(calculateRCI(data, 5)).toBeCloseTo(50, 1);
+  });
+});

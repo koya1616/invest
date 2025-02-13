@@ -85,43 +85,40 @@ export const calculateEMA = (data: number[], period: number): number | null => {
 };
 
 /**
- * RCI（Rank Correlation Index）を計算する関数。
+ * 指定された期間のRCI（Rank Correlation Index）を計算します。
  *
- * この関数は、指定された期間 (`period`) に基づいて株価データの終値と日付の順位相関を計算します。
- * RCI は、時系列データの順位に基づいて相関を測定する指標で、テクニカル分析で使用されます。
+ * @param {number[]} close - 終値の配列。計算に使用する価格データ。
+ * @param {number} period - RCIを計算する期間。期間内のデータ数が必要です。
+ * @returns {number | null} - 計算されたRCI値。期間内のデータ数が不足している場合はnullを返します。
  *
- * 計算式:
- * RCI = 1 - (6 * Σ(d^2)) / (n * (n^2 - 1))
- * ここで、d は終値の順位と日付の順位の差を表し、n は期間を表します。
- *
- * @param data - 株価データの配列。各要素は以下のプロパティを持つオブジェクトです：
- *   - `timestamp`: タイムスタンプ（日付）。古い日付から新しい日付の順に並んでいることを前提とします。
- *   - `close`: 終値。
- * @param period - 計算に使用する期間（例：5日間、10日間など）。正の整数を指定してください。
- *
- * @returns 計算された RCI の値（%単位）。範囲は通常 -100 から 100 の間です。
- *          データが不十分な場合（`data.length < period`）、`null` を返します。
+ * @remarks
+ * RCIは、価格の順位相関を基にしたテクニカル指標です。RCIの値は-100から100の範囲で変動し、値が高いほど価格が上昇傾向にあり、値が低いほど価格が下降傾向にあることを示します。
  */
-export const calculateRCI = (data: { timestamp: number; close: number }[], period: number): number | null => {
-  if (data.length < period) return null;
+export const calculateRCI = (close: number[], period: number): number | null => {
+  if (close.length < period) return null;
 
-  const closeRanks = rank(data.slice(-period).map((d) => d.close));
-  const timestampRanks = rank(data.slice(-period).map((d) => d.timestamp));
+  const prices = close.slice(-period);
+  const priceRanks: number[] = [];
+  const sortedPrices = [...prices].sort((a, b) => a - b);
 
-  let sumD2 = 0;
-  for (let i = 0; i < period; i++) {
-    const d = closeRanks[i] - timestampRanks[i];
-    sumD2 += d * d;
+  for (const price of prices) {
+    const index = sortedPrices.indexOf(price);
+    let rank = index + 1;
+
+    const sameValues = sortedPrices.filter((p) => p === price);
+    if (sameValues.length > 1) {
+      rank = index + (sameValues.length + 1) / 2;
+    }
+
+    priceRanks.push(rank);
   }
 
-  return (1 - (6 * sumD2) / (period * (period ** 2 - 1))) * 100;
-};
+  const d2Sum = Array.from({ length: period }, (_, i) => i + 1).reduce((sum, timeRank, i) => {
+    const diff = timeRank - priceRanks[i];
+    return sum + diff * diff;
+  }, 0);
 
-const rank = (values: number[]): number[] => {
-  return values
-    .map((value, index) => ({ value, index }))
-    .sort((a, b) => a.value - b.value)
-    .map((item, rank) => ({ ...item, rank: rank + 1 }))
-    .sort((a, b) => a.index - b.index)
-    .map((item) => item.rank);
+  const rci = (1 - (6 * d2Sum) / (period * (period * period - 1))) * 100;
+
+  return Math.round(rci * 100) / 100;
 };
