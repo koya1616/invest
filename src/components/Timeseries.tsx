@@ -35,7 +35,7 @@ const formatPrice = (data: MarketDataResponse, interval: string) => {
       sma.push(close);
 
       return {
-        name: formatDateTimeString(item.dateTime_str, interval),
+        name: formatDateTimeString(new Date(item.dateTime_str), interval),
         openClose: [open, close],
         lowHigh: [low, high],
         sma5: calculateSma(sma, 5),
@@ -61,7 +61,7 @@ const formatRsi = (data: MarketDataResponse, interval: string) => {
       rsi.push(close);
 
       return {
-        name: formatDateTimeString(item.dateTime_str, interval),
+        name: formatDateTimeString(new Date(item.dateTime_str), interval),
         rsi: calculateRSI(rsi, 14),
       };
     })
@@ -87,7 +87,7 @@ const formatMacd = (data: MarketDataResponse, interval: string) => {
       }
       const calculatedSignal = calculateEMA(signal, 9);
       return {
-        name: formatDateTimeString(item.dateTime_str, interval),
+        name: formatDateTimeString(new Date(item.dateTime_str), interval),
         macd: macd,
         signal: calculatedSignal,
         histogram: macd !== null && calculatedSignal !== null ? macd - calculatedSignal : null,
@@ -101,7 +101,7 @@ const formatVolume = (data: MarketDataResponse, interval: string) => {
     .map((item) => {
       if (item.close === null) return null;
       return {
-        name: formatDateTimeString(item.dateTime_str, interval),
+        name: formatDateTimeString(new Date(item.dateTime_str), interval),
         volume: item.volume,
       };
     })
@@ -122,7 +122,7 @@ const formatMadRate = (data: MarketDataResponse, interval: string) => {
       if (calculatedSma5 === null || calculatedSma25 === null) return null;
 
       return {
-        name: formatDateTimeString(item.dateTime_str, interval),
+        name: formatDateTimeString(new Date(item.dateTime_str), interval),
         mad5: ((close - calculatedSma5) / calculatedSma5) * 100,
         mad25: ((close - calculatedSma25) / calculatedSma25) * 100,
       };
@@ -140,7 +140,7 @@ const formatRci = (data: MarketDataResponse, interval: string) => {
       closeArray.push({ timestamp: dateTime, close });
 
       return {
-        name: formatDateTimeString(item.dateTime_str, interval),
+        name: formatDateTimeString(new Date(item.dateTime_str), interval),
         rci9: calculateRCI(closeArray, 9),
         rci14: calculateRCI(closeArray, 14),
         rci25: calculateRCI(closeArray, 25),
@@ -172,7 +172,7 @@ const formatStochastic = (data: MarketDataResponse, interval: string) => {
       if (pastKValues.length > D) pastKValues.shift();
 
       return {
-        name: formatDateTimeString(item.dateTime_str, interval),
+        name: formatDateTimeString(new Date(item.dateTime_str), interval),
         k,
         d: pastKValues.reduce((sum, val) => sum + val, 0) / D,
       };

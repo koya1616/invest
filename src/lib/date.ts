@@ -1,5 +1,4 @@
-export const formatDateTimeString = (dateStr: string, format: string) => {
-  const date = new Date(dateStr);
+export const formatDateTimeString = (date: Date, format: string) => {
   if (format === "1" || format === "5") {
     return formatTime(date);
   }
