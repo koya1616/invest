@@ -19,7 +19,7 @@ const Prediction = async ({ code, name, interval }: { code: string; name: string
   const buySignals = [isBuySignalOfRsi, isBuySignalOfOpenClose, isBuySignalOfMacd, isBuySignalOfMadRate];
   const trueCount = buySignals.reduce((count, value) => (value ? count + 1 : count), 0);
   return (
-    <ToTimeseriesButton code={code}>
+    <ToTimeseriesButton code={code} interval={interval}>
       <div
         className={`rounded-lg w-44 p-2 ${buySignals.some((value) => value === true) ? "border-red-500" : "border-gray-200"} ${trueCount > 1 ? `border-${trueCount}` : "border"}`}
       >
