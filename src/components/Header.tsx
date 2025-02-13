@@ -18,24 +18,9 @@ const Header = ({ code, interval }: { code: string; interval: string }) => {
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         <button type="button" onClick={toggleMenu} className="sm:hidden p-2 rounded-md" aria-label="Menu">
           <div className="w-6 h-5 relative flex flex-col justify-between">
-            <span
-              className={`
-              w-full h-0.5 bg-gray-600 rounded-full transform transition-all duration-300
-              ${isOpen ? "rotate-45 translate-y-2" : ""}
-            `}
-            />
-            <span
-              className={`
-              w-full h-0.5 bg-gray-600 rounded-full transition-all duration-300
-              ${isOpen ? "opacity-0" : "opacity-100"}
-            `}
-            />
-            <span
-              className={`
-              w-full h-0.5 bg-gray-600 rounded-full transform transition-all duration-300
-              ${isOpen ? "-rotate-45 -translate-y-2" : ""}
-            `}
-            />
+            <span className="h-0.5 bg-gray-600" />
+            <span className="h-0.5 bg-gray-600" />
+            <span className="h-0.5 bg-gray-600" />
           </div>
         </button>
 
