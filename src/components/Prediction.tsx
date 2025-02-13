@@ -1,16 +1,20 @@
 import { fetchStocksDetail } from "@/actions/stocksDetail";
 import { fetchTimeseries, type MarketDataResponse } from "@/actions/timeseries";
-import { calculateRSI } from "@/lib/calculate";
+import { calculateEMA, calculateRSI } from "@/lib/calculate";
 import { checkBuySignalOfOpenClose } from "@/lib/prediction/openClose";
 import { checkBuySignalOfRsi } from "@/lib/prediction/rsi";
 import ToTimeseriesButton from "./ToTimeseriesButton";
+import { checkBuySignalOfMacd } from "@/lib/prediction/macd";
 
 const Prediction = async ({ code, name, interval }: { code: string; name: string; interval: string }) => {
   const data = await fetchTimeseries(code, interval);
   const detail = await fetchStocksDetail(code);
+
   const isBuySignalOfRsi = checkBuySignalOfRsi(formatRsiAndPrices(data));
   const isBuySignalOfOpenClose = checkBuySignalOfOpenClose(formatOpenClose(data), 3);
-  const buySignals = [isBuySignalOfRsi, isBuySignalOfOpenClose];
+  const isBuySignalOfMacd = checkBuySignalOfMacd(formatMacd(data));
+
+  const buySignals = [isBuySignalOfRsi, isBuySignalOfOpenClose, isBuySignalOfMacd];
   const trueCount = buySignals.reduce((count, value) => (value ? count + 1 : count), 0);
   return (
     <ToTimeseriesButton code={code}>
@@ -51,6 +55,10 @@ const Prediction = async ({ code, name, interval }: { code: string; name: string
             <span>RSI</span>
             <span>{isBuySignalOfRsi && <span className="text-red-500">↑</span>}</span>
           </div>
+          <div className="flex justify-between items-center border-b">
+            <span>MACD</span>
+            <span>{isBuySignalOfMacd && <span className="text-red-500">↑</span>}</span>
+          </div>
 
           <div className="flex justify-between items-center">
             <span>OpCl</span>
@@ -88,6 +96,31 @@ const formatOpenClose = (data: MarketDataResponse) => {
     closes.push(close);
   }
   return { opens, closes };
+};
+
+const formatMacd = (data: MarketDataResponse) => {
+  const ema: number[] = [];
+  const macdArray: number[] = [];
+  const signal: number[] = [];
+  for (const item of data.series) {
+    const { close } = item;
+    if (close === null) continue;
+    ema.push(close);
+
+    const calculatedEma12 = calculateEMA(ema, 12);
+    const calculatedEma26 = calculateEMA(ema, 26);
+    const macd = calculatedEma12 !== null && calculatedEma26 !== null ? calculatedEma12 - calculatedEma26 : null;
+
+    if (macd !== null) {
+      macdArray.push(macd);
+
+      const calculatedSignal = calculateEMA(macdArray, 9);
+      if (calculatedSignal !== null) {
+        signal.push(calculatedSignal);
+      }
+    }
+  }
+  return { macd: macdArray, signal };
 };
 
 export default Prediction;
