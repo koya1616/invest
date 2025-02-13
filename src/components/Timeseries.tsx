@@ -131,16 +131,16 @@ const formatMadRate = (data: MarketDataResponse, interval: string) => {
 };
 
 const formatRci = (data: MarketDataResponse, interval: string) => {
-  const closeArray: { timestamp: number; close: number }[] = [];
+  const closeArray: number[] = [];
   return data.series
     .map((item) => {
-      const { dateTime, close } = item;
+      const { dateTime_str, close } = item;
       if (close === null) return null;
 
-      closeArray.push({ timestamp: dateTime, close });
+      closeArray.push(close);
 
       return {
-        name: formatDateTimeString(new Date(item.dateTime_str), interval),
+        name: formatDateTimeString(new Date(dateTime_str), interval),
         rci9: calculateRCI(closeArray, 9),
         rci14: calculateRCI(closeArray, 14),
         rci25: calculateRCI(closeArray, 25),
