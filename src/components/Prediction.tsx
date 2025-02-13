@@ -1,10 +1,11 @@
 import { fetchStocksDetail } from "@/actions/stocksDetail";
 import { fetchTimeseries, type MarketDataResponse } from "@/actions/timeseries";
-import { calculateEMA, calculateRSI } from "@/lib/calculate";
+import { calculateEMA, calculateRSI, calculateSma } from "@/lib/calculate";
 import { checkBuySignalOfOpenClose } from "@/lib/prediction/openClose";
 import { checkBuySignalOfRsi } from "@/lib/prediction/rsi";
 import ToTimeseriesButton from "./ToTimeseriesButton";
 import { checkBuySignalOfMacd } from "@/lib/prediction/macd";
+import { checkBuySignalOfMadRate } from "@/lib/prediction/madRate";
 
 const Prediction = async ({ code, name, interval }: { code: string; name: string; interval: string }) => {
   const data = await fetchTimeseries(code, interval);
@@ -13,8 +14,9 @@ const Prediction = async ({ code, name, interval }: { code: string; name: string
   const isBuySignalOfRsi = checkBuySignalOfRsi(formatRsiAndPrices(data));
   const isBuySignalOfOpenClose = checkBuySignalOfOpenClose(formatOpenClose(data), 3);
   const isBuySignalOfMacd = checkBuySignalOfMacd(formatMacd(data));
+  const isBuySignalOfMadRate = checkBuySignalOfMadRate(formatMadRate(data));
 
-  const buySignals = [isBuySignalOfRsi, isBuySignalOfOpenClose, isBuySignalOfMacd];
+  const buySignals = [isBuySignalOfRsi, isBuySignalOfOpenClose, isBuySignalOfMacd, isBuySignalOfMadRate];
   const trueCount = buySignals.reduce((count, value) => (value ? count + 1 : count), 0);
   return (
     <ToTimeseriesButton code={code}>
@@ -58,6 +60,10 @@ const Prediction = async ({ code, name, interval }: { code: string; name: string
           <div className="flex justify-between items-center border-b">
             <span>MACD</span>
             <span>{isBuySignalOfMacd && <span className="text-red-500">↑</span>}</span>
+          </div>
+          <div className="flex justify-between items-center border-b">
+            <span>乖離率</span>
+            <span>{isBuySignalOfMadRate && <span className="text-red-500">↑</span>}</span>
           </div>
 
           <div className="flex justify-between items-center">
@@ -121,6 +127,25 @@ const formatMacd = (data: MarketDataResponse) => {
     }
   }
   return { macd: macdArray, signal };
+};
+
+const formatMadRate = (data: MarketDataResponse) => {
+  const prices: number[] = [];
+  const shortMad: number[] = [];
+  const longMad: number[] = [];
+  for (const item of data.series) {
+    const { close } = item;
+    if (close === null) continue;
+
+    prices.push(close);
+    const calculatedSma5 = calculateSma(prices, 5);
+    const calculatedSma25 = calculateSma(prices, 25);
+    if (calculatedSma5 === null || calculatedSma25 === null) continue;
+
+    shortMad.push((close - calculatedSma5) / calculatedSma5) * 100;
+    longMad.push((close - calculatedSma25) / calculatedSma25) * 100;
+  }
+  return { shortMad, longMad, prices };
 };
 
 export default Prediction;
