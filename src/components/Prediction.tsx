@@ -9,8 +9,12 @@ const Prediction = async ({ code, name, interval }: { code: string; name: string
   const detail = await fetchStocksDetail(code);
   const isBuySignalOfRsi = checkBuySignalOfRsi(formatRsiAndPrices(data));
   const isBuySignalOfOpenClose = checkBuySignalOfOpenClose(formatOpenClose(data), 3);
+  const buySignals = [isBuySignalOfRsi, isBuySignalOfOpenClose];
+  const trueCount = buySignals.reduce((count, value) => (value ? count + 1 : count), 0);
   return (
-    <div className={`rounded-lg w-44 p-2 ${hasTrue([isBuySignalOfRsi, isBuySignalOfOpenClose]) ? "border-red-500" : "border-gray-200"} border-${countTrue([isBuySignalOfRsi, isBuySignalOfOpenClose])}`}>
+    <div
+      className={`rounded-lg w-44 p-2 ${buySignals.some((value) => value === true) ? "border-red-500" : "border-gray-200"} ${trueCount > 1 ? `border-${trueCount}` : "border"}`}
+    >
       <h2 className="font-bold mb-2">
         {code} <span className="text-xs">{name}</span>
       </h2>
@@ -82,13 +86,5 @@ const formatOpenClose = (data: MarketDataResponse) => {
   }
   return { opens, closes };
 };
-
-const hasTrue = (arr: boolean[]): boolean =>{
-  return arr.some(value => value === true);
-}
-
-const countTrue = (arr: boolean[]): number => {
-  return arr.reduce((count, value) => value ? count + 1 : count, 0);
-}
 
 export default Prediction;
