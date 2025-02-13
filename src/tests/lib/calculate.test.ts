@@ -1,4 +1,4 @@
-import { calculateEMA, calculateRSI, calculateSma } from "../../lib/calculate";
+import { calculateEMA, calculateRCI, calculateRSI, calculateSma } from "../../lib/calculate";
 import { describe, it, expect } from "vitest";
 
 describe("calculateSma", () => {
@@ -68,21 +68,18 @@ describe("calculateEMA", () => {
   it("正しくEMAを計算できること", () => {
     const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     const period = 5;
-    const result = calculateEMA(data, period);
-    expect(result).toBeCloseTo(8, 2);
+    expect(calculateEMA(data, period)).toBeCloseTo(8, 2);
   });
 
   it("データ配列の長さが期間と同じ場合：単純移動平均（SMA）を返す", () => {
     const data = [1, 2, 3, 4, 5];
     const period = 5;
-    const result = calculateEMA(data, period);
-    expect(result).toBe(3);
+    expect(calculateEMA(data, period)).toBe(3);
   });
 
   it("データ配列の長さが期間未満の場合：nullを返す", () => {
     const data = [1, 2, 3];
     const period = 5;
-    const result = calculateEMA(data, period);
-    expect(result).toBeNull();
+    expect(calculateEMA(data, period)).toBeNull();
   });
 });
