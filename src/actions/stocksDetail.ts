@@ -16,6 +16,7 @@ interface PriceBoard {
   typeDetail: string;
   marketName: string;
   industry: Industry;
+  /** リアルタイム株価 */
   price: string;
   priceDateTime: string;
   savePrice: string;

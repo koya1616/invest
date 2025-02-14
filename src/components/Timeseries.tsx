@@ -1,4 +1,4 @@
-import { formatDateTimeString } from "@/lib/date";
+import { formatFullDate, formatDateTimeString } from "@/lib/date";
 import StockPriceChart from "./StockPriceChart";
 import { calculateEMA, calculateRCI, calculateRSI, calculateSma } from "@/lib/calculate";
 import { fetchTimeseries, type MarketDataResponse } from "@/actions/timeseries";
@@ -8,26 +8,45 @@ import VolumeChart from "./VolumeChart";
 import MadRateChart from "./MadRateChart";
 import RciChart from "./RciChart";
 import StochasticChart from "./StochasticChart";
+import { fetchStocksDetail } from "@/actions/stocksDetail";
 
 const Timeseries = async ({ code, interval }: { code: string; interval: string }) => {
   const data = await fetchTimeseries(code, interval);
-  const formattedPrice = formatPrice(data, interval);
+
+  const detail = await fetchStocksDetail(code);
+  const latestPrice = Number(detail.priceBoard.price.replace(/,/g, ""));
+  const latestPriceBoard: Pick<MarketDataResponse, "series">["series"] = [
+    {
+      dateTime_str: `${formatFullDate(new Date())} ${detail.priceBoard.priceDateTime}`,
+      dateTime: 0,
+      close: latestPrice,
+      open: latestPrice,
+      high: latestPrice,
+      low: latestPrice,
+      volume: 0,
+      sellMargin: null,
+      buyMargin: null,
+    },
+  ];
+  const series = interval === "1" || interval === "5" ? [...data.series, ...latestPriceBoard] : data.series;
+
+  const formattedPrice = formatPrice(series, interval);
   return (
     <>
       <StockPriceChart data={formattedPrice.data} min={formattedPrice.min} max={formattedPrice.max} />
-      <RsiChart data={formatRsi(data, interval)} />
-      <MacdChart data={formatMacd(data, interval)} />
-      <VolumeChart data={formatVolume(data, interval)} />
-      <MadRateChart data={formatMadRate(data, interval)} />
-      <RciChart data={formatRci(data, interval)} />
-      <StochasticChart data={formatStochastic(data, interval)} />
+      <RsiChart data={formatRsi(series, interval)} />
+      <MacdChart data={formatMacd(series, interval)} />
+      <VolumeChart data={formatVolume(series, interval)} />
+      <MadRateChart data={formatMadRate(series, interval)} />
+      <RciChart data={formatRci(series, interval)} />
+      <StochasticChart data={formatStochastic(series, interval)} />
     </>
   );
 };
 
-const formatPrice = (data: MarketDataResponse, interval: string) => {
+const formatPrice = (series: Pick<MarketDataResponse, "series">["series"], interval: string) => {
   const sma: number[] = [];
-  const formattedData = data.series
+  const formattedData = series
     .map((item) => {
       const { open, close, high, low } = item;
       if (close === null) return null;
@@ -46,14 +65,20 @@ const formatPrice = (data: MarketDataResponse, interval: string) => {
         fill: close < open ? "#ef4444" : "#22c55e",
       };
     })
-    .filter((item) => item !== null);
+    .filter((item) => item !== null)
+    .filter((item, index, array) => {
+      if (index === array.length - 1 && index > 0) {
+        return item.name !== array[index - 1].name;
+      }
+      return true;
+    });
 
   return { data: formattedData, min: Math.min(...sma), max: Math.max(...sma) };
 };
 
-const formatRsi = (data: MarketDataResponse, interval: string) => {
+const formatRsi = (series: Pick<MarketDataResponse, "series">["series"], interval: string) => {
   const rsi: number[] = [];
-  return data.series
+  return series
     .map((item) => {
       const { close } = item;
       if (close === null) return null;
@@ -65,13 +90,19 @@ const formatRsi = (data: MarketDataResponse, interval: string) => {
         rsi: calculateRSI(rsi, 14),
       };
     })
-    .filter((item) => item !== null);
+    .filter((item) => item !== null)
+    .filter((item, index, array) => {
+      if (index === array.length - 1 && index > 0) {
+        return item.name !== array[index - 1].name;
+      }
+      return true;
+    });
 };
 
-const formatMacd = (data: MarketDataResponse, interval: string) => {
+const formatMacd = (series: Pick<MarketDataResponse, "series">["series"], interval: string) => {
   const ema: number[] = [];
   const signal: number[] = [];
-  return data.series
+  return series
     .map((item) => {
       const { close } = item;
       if (close === null) return null;
@@ -93,11 +124,17 @@ const formatMacd = (data: MarketDataResponse, interval: string) => {
         histogram: macd !== null && calculatedSignal !== null ? macd - calculatedSignal : null,
       };
     })
-    .filter((item) => item !== null);
+    .filter((item) => item !== null)
+    .filter((item, index, array) => {
+      if (index === array.length - 1 && index > 0) {
+        return item.name !== array[index - 1].name;
+      }
+      return true;
+    });
 };
 
-const formatVolume = (data: MarketDataResponse, interval: string) => {
-  return data.series
+const formatVolume = (series: Pick<MarketDataResponse, "series">["series"], interval: string) => {
+  return series
     .map((item) => {
       if (item.close === null) return null;
       return {
@@ -105,12 +142,18 @@ const formatVolume = (data: MarketDataResponse, interval: string) => {
         volume: item.volume,
       };
     })
-    .filter((item) => item !== null);
+    .filter((item) => item !== null)
+    .filter((item, index, array) => {
+      if (index === array.length - 1 && index > 0) {
+        return item.name !== array[index - 1].name;
+      }
+      return true;
+    });
 };
 
-const formatMadRate = (data: MarketDataResponse, interval: string) => {
+const formatMadRate = (series: Pick<MarketDataResponse, "series">["series"], interval: string) => {
   const sma: number[] = [];
-  return data.series
+  return series
     .map((item) => {
       const { close } = item;
       if (close === null) return null;
@@ -127,12 +170,18 @@ const formatMadRate = (data: MarketDataResponse, interval: string) => {
         mad25: ((close - calculatedSma25) / calculatedSma25) * 100,
       };
     })
-    .filter((item) => item !== null);
+    .filter((item) => item !== null)
+    .filter((item, index, array) => {
+      if (index === array.length - 1 && index > 0) {
+        return item.name !== array[index - 1].name;
+      }
+      return true;
+    });
 };
 
-const formatRci = (data: MarketDataResponse, interval: string) => {
+const formatRci = (series: Pick<MarketDataResponse, "series">["series"], interval: string) => {
   const closeArray: number[] = [];
-  return data.series
+  return series
     .map((item) => {
       const { dateTime_str, close } = item;
       if (close === null) return null;
@@ -147,16 +196,22 @@ const formatRci = (data: MarketDataResponse, interval: string) => {
       };
     })
     .filter((item) => item !== null)
-    .filter((item) => item.rci9 !== null);
+    .filter((item) => item.rci9 !== null)
+    .filter((item, index, array) => {
+      if (index === array.length - 1 && index > 0) {
+        return item.name !== array[index - 1].name;
+      }
+      return true;
+    });
 };
 
-const formatStochastic = (data: MarketDataResponse, interval: string) => {
+const formatStochastic = (series: Pick<MarketDataResponse, "series">["series"], interval: string) => {
   const highs: number[] = [];
   const lows: number[] = [];
   const pastKValues: number[] = [];
   const K = 5;
   const D = 3;
-  return data.series
+  return series
     .map((item) => {
       const { high, low, close } = item;
       if (close === null) return null;
@@ -173,11 +228,17 @@ const formatStochastic = (data: MarketDataResponse, interval: string) => {
 
       return {
         name: formatDateTimeString(new Date(item.dateTime_str), interval),
-        k,
-        d: pastKValues.reduce((sum, val) => sum + val, 0) / D,
+        k: k ? k : 0,
+        d: pastKValues.reduce((sum, val) => sum + val, 0) / D ? pastKValues.reduce((sum, val) => sum + val, 0) / D : 0,
       };
     })
-    .filter((item) => item !== null);
+    .filter((item) => item !== null)
+    .filter((item, index, array) => {
+      if (index === array.length - 1 && index > 0) {
+        return item.name !== array[index - 1].name;
+      }
+      return true;
+    });
 };
 
 export default Timeseries;
