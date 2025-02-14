@@ -29,7 +29,7 @@ const Prediction = async ({ code, name, interval }: { code: string; name: string
   return (
     <ToTimeseriesButton code={code} interval={interval}>
       <div
-        className={`rounded-lg w-44 p-2 ${buySignals.some((value) => value === true) ? "border-red-500" : "border-gray-200"} ${trueCount > 1 ? `border-${trueCount}` : "border"}`}
+        className={`rounded-lg w-44 p-2 ${trueCount > 1 ? "border-red-500" : "border-gray-200"} ${trueCount > 2 ? "border-2" : "border"}`}
       >
         <h2 className="font-bold mb-2">
           {code} <span className="text-xs">{name}</span>
