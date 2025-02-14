@@ -1,3 +1,6 @@
+import { formatFullDate } from "@/lib/date";
+import type { MarketDataResponse } from "./timeseries";
+
 interface Industry {
   industryName: string;
   industryItemsLink: string;
@@ -189,4 +192,35 @@ export const fetchStocksDetail = async (code: string): Promise<StockDetail> => {
     }),
   });
   return await response.json();
+};
+
+export const fetchLatestPriceBoard = async (
+  code: string,
+): Promise<Pick<MarketDataResponse, "series">["series"][number]> => {
+  const response = await fetch("https://finance.yahoo.co.jp/quote/stocks/ajax", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-z-jwt-token": `${process.env.X_Z_JWT_TOKEN}`,
+    },
+    body: JSON.stringify({
+      id: "stocksDetail",
+      params: {
+        code: `${code}.T`,
+      },
+    }),
+  });
+  const detail = await response.json();
+  const latestPrice = Number(detail.priceBoard.price.replace(/,/g, ""));
+  return {
+    dateTime_str: `${formatFullDate(new Date())} ${detail.priceBoard.priceDateTime}`,
+    dateTime: 0,
+    close: latestPrice,
+    open: latestPrice,
+    high: latestPrice,
+    low: latestPrice,
+    volume: 0,
+    sellMargin: null,
+    buyMargin: null,
+  };
 };

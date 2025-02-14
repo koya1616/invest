@@ -8,27 +8,12 @@ import VolumeChart from "./VolumeChart";
 import MadRateChart from "./MadRateChart";
 import RciChart from "./RciChart";
 import StochasticChart from "./StochasticChart";
-import { fetchStocksDetail } from "@/actions/stocksDetail";
+import { fetchLatestPriceBoard } from "@/actions/stocksDetail";
 
 const Timeseries = async ({ code, interval }: { code: string; interval: string }) => {
   const data = await fetchTimeseries(code, interval);
-
-  const detail = await fetchStocksDetail(code);
-  const latestPrice = Number(detail.priceBoard.price.replace(/,/g, ""));
-  const latestPriceBoard: Pick<MarketDataResponse, "series">["series"] = [
-    {
-      dateTime_str: `${formatFullDate(new Date())} ${detail.priceBoard.priceDateTime}`,
-      dateTime: 0,
-      close: latestPrice,
-      open: latestPrice,
-      high: latestPrice,
-      low: latestPrice,
-      volume: 0,
-      sellMargin: null,
-      buyMargin: null,
-    },
-  ];
-  const series = interval === "1" || interval === "5" ? [...data.series, ...latestPriceBoard] : data.series;
+  const latestPriceBoard = await fetchLatestPriceBoard(code);
+  const series = interval === "1" || interval === "5" ? [...data.series, latestPriceBoard] : data.series;
 
   const formattedPrice = formatPrice(series, interval);
   return (
