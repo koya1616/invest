@@ -122,3 +122,38 @@ export const calculateRCI = (close: number[], period: number): number | null => 
 
   return Math.round(rci * 100) / 100;
 };
+
+// ボリンジャーバンドの下限を計算する関数
+/**
+ * 指定された期間と乗数を使用して、価格データの下限バンドを計算します。
+ *
+ * @param prices - 価格データの配列。
+ * @param period -
+ * - 計算に使用する期間（データポイントの数）。
+ * - より敏感にしたい場合: 期間を短く（例：10日）
+ * - より安定させたい場合: 期間を長く（例：25日）
+ * @param multiplier -
+ * - 標準偏差に乗じる乗数。デフォルトは2。
+ * - よりシグナルを厳しくしたい場合: 乖離幅を大きく（例：2.5）
+ * - よりシグナルを出やすくしたい場合: 乖離幅を小さく（例：1.5）
+ * @returns 下限バンドの値。
+ *
+ * @remarks
+ * この関数は、単純移動平均（SMA）と標準偏差を使用して、ボリンジャーバンドの下限を計算します。
+ * まず、指定された期間の価格データを抽出し、そのデータのSMAを計算します。
+ * 次に、SMAからの偏差を使用して標準偏差を計算し、最後に標準偏差に乗数を掛けた値をSMAから引くことで下限バンドを求めます。
+ */
+export const calculateLowerBand = (prices: number[], period: number, multiplier: number): number => {
+  const targetPrices = prices.slice(-period);
+
+  const sma = targetPrices.reduce((sum, price) => sum + price, 0) / period;
+
+  const variance =
+    targetPrices.reduce((sum, price) => {
+      const diff = price - sma;
+      return sum + diff * diff;
+    }, 0) / period;
+  const standardDeviation = Math.sqrt(variance);
+
+  return sma - standardDeviation * multiplier;
+};

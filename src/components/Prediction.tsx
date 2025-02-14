@@ -1,11 +1,12 @@
 import { fetchStocksDetail } from "@/actions/stocksDetail";
 import { fetchTimeseries, type MarketDataResponse } from "@/actions/timeseries";
-import { calculateEMA, calculateRSI, calculateSma } from "@/lib/calculate";
+import { calculateEMA, calculateRCI, calculateRSI, calculateSma } from "@/lib/calculate";
 import { checkBuySignalOfOpenClose } from "@/lib/prediction/openClose";
 import { checkBuySignalOfRsi } from "@/lib/prediction/rsi";
 import ToTimeseriesButton from "./ToTimeseriesButton";
 import { checkBuySignalOfMacd } from "@/lib/prediction/macd";
 import { checkBuySignalOfMadRate } from "@/lib/prediction/madRate";
+import { checkBuySignalOfRci } from "@/lib/prediction/rci";
 
 const Prediction = async ({ code, name, interval }: { code: string; name: string; interval: string }) => {
   const data = await fetchTimeseries(code, interval);
@@ -15,8 +16,15 @@ const Prediction = async ({ code, name, interval }: { code: string; name: string
   const isBuySignalOfOpenClose = checkBuySignalOfOpenClose(formatOpenClose(data), 3);
   const isBuySignalOfMacd = checkBuySignalOfMacd(formatMacd(data));
   const isBuySignalOfMadRate = checkBuySignalOfMadRate(formatMadRate(data));
+  const isBuySignalOfRci = checkBuySignalOfRci(formatRci(data));
 
-  const buySignals = [isBuySignalOfRsi, isBuySignalOfOpenClose, isBuySignalOfMacd, isBuySignalOfMadRate];
+  const buySignals = [
+    isBuySignalOfRsi,
+    isBuySignalOfOpenClose,
+    isBuySignalOfMacd,
+    isBuySignalOfMadRate,
+    isBuySignalOfRci,
+  ];
   const trueCount = buySignals.reduce((count, value) => (value ? count + 1 : count), 0);
   return (
     <ToTimeseriesButton code={code} interval={interval}>
@@ -64,6 +72,10 @@ const Prediction = async ({ code, name, interval }: { code: string; name: string
           <div className="flex justify-between items-center border-b">
             <span>乖離率</span>
             <span>{isBuySignalOfMadRate && <span className="text-red-500">↑</span>}</span>
+          </div>
+          <div className="flex justify-between items-center border-b">
+            <span>RCI</span>
+            <span>{isBuySignalOfRci && <span className="text-red-500">↑</span>}</span>
           </div>
 
           <div className="flex justify-between items-center">
@@ -146,6 +158,22 @@ const formatMadRate = (data: MarketDataResponse) => {
     longMad.push((close - calculatedSma25) / calculatedSma25) * 100;
   }
   return { shortMad, longMad, prices };
+};
+
+const formatRci = (data: MarketDataResponse) => {
+  const prices: number[] = [];
+  const rci: number[] = [];
+  for (const item of data.series) {
+    const { close } = item;
+    if (close === null) continue;
+    prices.push(close);
+
+    const calculatedRci = calculateRCI(prices, 9);
+    if (calculatedRci !== null) {
+      rci.push(calculatedRci);
+    }
+  }
+  return { rci, prices };
 };
 
 export default Prediction;
