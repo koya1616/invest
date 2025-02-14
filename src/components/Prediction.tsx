@@ -12,12 +12,13 @@ import { generateRandomString } from "@/lib/util";
 const Prediction = async ({ code, name, interval }: { code: string; name: string; interval: string }) => {
   const data = await fetchTimeseries(code, interval);
   const detail = await fetchStocksDetail(code);
+  const series = interval === "1" || interval === "5" ? data.series : data.series;
 
-  const isBuySignalOfRsi = checkBuySignalOfRsi(formatRsiAndPrices(data.series));
-  const isBuySignalOfOpenClose = checkBuySignalOfOpenClose(formatOpenClose(data.series), 3);
-  const isBuySignalOfMacd = checkBuySignalOfMacd(formatMacd(data.series));
-  const isBuySignalOfMadRate = checkBuySignalOfMadRate(formatMadRate(data.series));
-  const isBuySignalOfRci = checkBuySignalOfRci(formatRci(data.series));
+  const isBuySignalOfRsi = checkBuySignalOfRsi(formatRsiAndPrices(series));
+  const isBuySignalOfOpenClose = checkBuySignalOfOpenClose(formatOpenClose(series), 3);
+  const isBuySignalOfMacd = checkBuySignalOfMacd(formatMacd(series));
+  const isBuySignalOfMadRate = checkBuySignalOfMadRate(formatMadRate(series));
+  const isBuySignalOfRci = checkBuySignalOfRci(formatRci(series));
 
   const buySignals = [
     isBuySignalOfRsi,
