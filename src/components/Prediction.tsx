@@ -13,11 +13,11 @@ const Prediction = async ({ code, name, interval }: { code: string; name: string
   const data = await fetchTimeseries(code, interval);
   const detail = await fetchStocksDetail(code);
 
-  const isBuySignalOfRsi = checkBuySignalOfRsi(formatRsiAndPrices(data));
-  const isBuySignalOfOpenClose = checkBuySignalOfOpenClose(formatOpenClose(data), 3);
-  const isBuySignalOfMacd = checkBuySignalOfMacd(formatMacd(data));
-  const isBuySignalOfMadRate = checkBuySignalOfMadRate(formatMadRate(data));
-  const isBuySignalOfRci = checkBuySignalOfRci(formatRci(data));
+  const isBuySignalOfRsi = checkBuySignalOfRsi(formatRsiAndPrices(data.series));
+  const isBuySignalOfOpenClose = checkBuySignalOfOpenClose(formatOpenClose(data.series), 3);
+  const isBuySignalOfMacd = checkBuySignalOfMacd(formatMacd(data.series));
+  const isBuySignalOfMadRate = checkBuySignalOfMadRate(formatMadRate(data.series));
+  const isBuySignalOfRci = checkBuySignalOfRci(formatRci(data.series));
 
   const buySignals = [
     isBuySignalOfRsi,
@@ -137,9 +137,9 @@ const Prediction = async ({ code, name, interval }: { code: string; name: string
   );
 };
 
-const formatRsiAndPrices = (data: MarketDataResponse) => {
+const formatRsiAndPrices = (series: Pick<MarketDataResponse, "series">["series"]) => {
   const closeArray: number[] = [];
-  const rsi = data.series
+  const rsi = series
     .map((item) => {
       const { close } = item;
       if (close === null) return null;
@@ -152,10 +152,10 @@ const formatRsiAndPrices = (data: MarketDataResponse) => {
   return { rsi, prices: closeArray };
 };
 
-const formatOpenClose = (data: MarketDataResponse) => {
+const formatOpenClose = (series: Pick<MarketDataResponse, "series">["series"]) => {
   const opens: number[] = [];
   const closes: number[] = [];
-  for (const item of data.series) {
+  for (const item of series) {
     const { open, close } = item;
     if (close === null) continue;
 
@@ -165,11 +165,11 @@ const formatOpenClose = (data: MarketDataResponse) => {
   return { opens, closes };
 };
 
-const formatMacd = (data: MarketDataResponse) => {
+const formatMacd = (series: Pick<MarketDataResponse, "series">["series"]) => {
   const ema: number[] = [];
   const macdArray: number[] = [];
   const signal: number[] = [];
-  for (const item of data.series) {
+  for (const item of series) {
     const { close } = item;
     if (close === null) continue;
     ema.push(close);
@@ -190,11 +190,11 @@ const formatMacd = (data: MarketDataResponse) => {
   return { macd: macdArray, signal };
 };
 
-const formatMadRate = (data: MarketDataResponse) => {
+const formatMadRate = (series: Pick<MarketDataResponse, "series">["series"]) => {
   const prices: number[] = [];
   const shortMad: number[] = [];
   const longMad: number[] = [];
-  for (const item of data.series) {
+  for (const item of series) {
     const { close } = item;
     if (close === null) continue;
 
@@ -209,10 +209,10 @@ const formatMadRate = (data: MarketDataResponse) => {
   return { shortMad, longMad, prices };
 };
 
-const formatRci = (data: MarketDataResponse) => {
+const formatRci = (series: Pick<MarketDataResponse, "series">["series"]) => {
   const prices: number[] = [];
   const rci: number[] = [];
-  for (const item of data.series) {
+  for (const item of series) {
     const { close } = item;
     if (close === null) continue;
     prices.push(close);
