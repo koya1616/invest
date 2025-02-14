@@ -14,7 +14,7 @@ const Header = ({ code, interval }: { code: string; interval: string }) => {
     setIsOpen(!isOpen);
   };
   return (
-    <header className="w-full bg-white shadow-sm border-b border-gray-200 mb-2">
+    <header className="w-full sticky top-0 bg-white shadow-sm border-b border-gray-200 mb-2">
       <div className="px-4 h-16 flex items-center justify-between">
         <button type="button" onClick={toggleMenu} className="sm:hidden p-2 rounded-md" aria-label="Menu">
           <div className="w-6 h-5 flex flex-col justify-between">
