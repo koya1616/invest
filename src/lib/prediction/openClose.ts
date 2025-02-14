@@ -49,10 +49,10 @@ const checkRangeBreak = (closes: number[], period: number): boolean => {
   return closes[closes.length - 1] > prevHigh;
 };
 
-export const checkBuySignalOfOpenClose = (data: { opens: number[]; closes: number[] }, period: number): boolean => {
-  return (
-    checkConsecutiveRise(data.closes, period) ||
-    checkMACross(data.opens, data.closes, period) ||
-    checkRangeBreak(data.closes, period)
-  );
+export const checkBuySignalOfOpenClose = (data: { opens: number[]; closes: number[] }, period: number): boolean[] => {
+  return [
+    checkConsecutiveRise(data.closes, period),
+    checkMACross(data.opens, data.closes, period),
+    checkRangeBreak(data.closes, period),
+  ];
 };

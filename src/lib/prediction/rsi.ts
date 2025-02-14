@@ -140,8 +140,8 @@ const detectMACross = (rsi: number[]): boolean => {
  *
  * @returns 買いシグナルが2つ以上検出された場合はtrue、それ以外の場合はfalseを返します。
  */
-export const checkBuySignalOfRsi = (data: { rsi: number[]; prices: number[] }): boolean => {
-  const signals = [
+export const checkBuySignalOfRsi = (data: { rsi: number[]; prices: number[] }): boolean[] => {
+  return [
     detectOversoldReversal(data.rsi),
     detectTrendlineBreak(data.rsi),
     detectBullishDivergence(data.rsi, data.prices),
@@ -149,8 +149,6 @@ export const checkBuySignalOfRsi = (data: { rsi: number[]; prices: number[] }): 
     detectSupportBounce(data.rsi),
     detectMACross(data.rsi),
   ];
-
-  return signals.reduce((count, value) => (value ? count + 1 : count), 0) >= 2;
 };
 
 const calculateMA = (values: number[], period: number): number[] => {

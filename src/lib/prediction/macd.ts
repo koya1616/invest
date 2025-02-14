@@ -53,12 +53,11 @@ const isHistogramIncreasing = (macd: number[], signal: number[]): boolean => {
   return histogram1 > histogram2 && histogram2 > histogram3;
 };
 
-export const checkBuySignalOfMacd = (data: { macd: number[]; signal: number[] }): boolean => {
-  const signals = [
+export const checkBuySignalOfMacd = (data: { macd: number[]; signal: number[] }): boolean[] => {
+  return [
     isGoldenCross(data.macd, data.signal),
     isCrossAboveZero(data.macd),
     isDivergenceWide(data.macd, data.signal),
     isHistogramIncreasing(data.macd, data.signal),
   ];
-  return signals.reduce((count, value) => (value ? count + 1 : count), 0) >= 2;
 };

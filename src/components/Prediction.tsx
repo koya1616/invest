@@ -7,6 +7,7 @@ import ToTimeseriesButton from "./ToTimeseriesButton";
 import { checkBuySignalOfMacd } from "@/lib/prediction/macd";
 import { checkBuySignalOfMadRate } from "@/lib/prediction/madRate";
 import { checkBuySignalOfRci } from "@/lib/prediction/rci";
+import { generateRandomString } from "@/lib/util";
 
 const Prediction = async ({ code, name, interval }: { code: string; name: string; interval: string }) => {
   const data = await fetchTimeseries(code, interval);
@@ -25,11 +26,14 @@ const Prediction = async ({ code, name, interval }: { code: string; name: string
     isBuySignalOfMadRate,
     isBuySignalOfRci,
   ];
-  const trueCount = buySignals.reduce((count, value) => (value ? count + 1 : count), 0);
+  const trueCount = buySignals.reduce(
+    (total, row) => total + row.reduce((rowTotal, signal) => rowTotal + (signal ? 1 : 0), 0),
+    0,
+  );
   return (
     <ToTimeseriesButton code={code} interval={interval}>
       <div
-        className={`rounded-lg w-44 p-2 ${trueCount > 1 ? "border-red-500" : "border-gray-200"} ${trueCount > 2 ? "border-2" : "border"}`}
+        className={`rounded-lg w-44 p-2 ${trueCount > 5 ? "border-red-500" : "border-gray-200"} ${trueCount > 5 ? "border-2" : "border"}`}
       >
         <h2 className="font-bold mb-2">
           {code} <span className="text-xs">{name}</span>
@@ -63,24 +67,69 @@ const Prediction = async ({ code, name, interval }: { code: string; name: string
 
           <div className="flex justify-between items-center border-b">
             <span>RSI</span>
-            <span>{isBuySignalOfRsi && <span className="text-red-500">↑</span>}</span>
+            <span>
+              {isBuySignalOfRsi.map(
+                (item) =>
+                  item && (
+                    <span key={generateRandomString()} className="text-red-500">
+                      ↑
+                    </span>
+                  ),
+              )}
+            </span>
           </div>
           <div className="flex justify-between items-center border-b">
             <span>MACD</span>
-            <span>{isBuySignalOfMacd && <span className="text-red-500">↑</span>}</span>
+            <span>
+              {isBuySignalOfMacd.map(
+                (item) =>
+                  item && (
+                    <span key={generateRandomString()} className="text-red-500">
+                      ↑
+                    </span>
+                  ),
+              )}
+            </span>
           </div>
           <div className="flex justify-between items-center border-b">
             <span>乖離率</span>
-            <span>{isBuySignalOfMadRate && <span className="text-red-500">↑</span>}</span>
+            <span>
+              {isBuySignalOfMadRate.map(
+                (item) =>
+                  item && (
+                    <span key={generateRandomString()} className="text-red-500">
+                      ↑
+                    </span>
+                  ),
+              )}
+            </span>
           </div>
           <div className="flex justify-between items-center border-b">
             <span>RCI</span>
-            <span>{isBuySignalOfRci && <span className="text-red-500">↑</span>}</span>
+            <span>
+              {isBuySignalOfRci.map(
+                (item) =>
+                  item && (
+                    <span key={generateRandomString()} className="text-red-500">
+                      ↑
+                    </span>
+                  ),
+              )}
+            </span>
           </div>
 
           <div className="flex justify-between items-center">
             <span>OpCl</span>
-            <span>{isBuySignalOfOpenClose && <span className="text-red-500">↑</span>}</span>
+            <span>
+              {isBuySignalOfOpenClose.map(
+                (item) =>
+                  item && (
+                    <span key={generateRandomString()} className="text-red-500">
+                      ↑
+                    </span>
+                  ),
+              )}
+            </span>
           </div>
         </div>
       </div>

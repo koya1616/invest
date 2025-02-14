@@ -85,13 +85,12 @@ const isRCIDivergenceBuySignal = (rci: number[], prices: number[]): boolean => {
   return priceDowntrend && rciUptrend && currentRCI < -60;
 };
 
-export const checkBuySignalOfRci = (data: { rci: number[]; prices: number[] }): boolean => {
+export const checkBuySignalOfRci = (data: { rci: number[]; prices: number[] }): boolean[] => {
   const { rci, prices } = data;
-  const signals = [
+  return [
     isRCICrossoverBuySignal(data.rci),
     isRCIDoubleBottomBuySignal(data.rci),
     isRCIBollingerBuySignal(rci, prices[prices.length - 1], calculateLowerBand(prices, 10, 2)),
     isRCIDivergenceBuySignal(rci, prices),
   ];
-  return signals.reduce((count, value) => (value ? count + 1 : count), 0) >= 2;
 };

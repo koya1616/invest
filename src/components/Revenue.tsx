@@ -1,4 +1,5 @@
 import { fetchRevenue } from "@/actions/revenue";
+import { generateRandomString } from "@/lib/util";
 
 const Revenue = async ({ code, name }: { code: string; name: string }) => {
   const revenue = await fetchRevenue(code);
@@ -39,12 +40,5 @@ const Revenue = async ({ code, name }: { code: string; name: string }) => {
     </div>
   );
 };
-const generateRandomString = (): string => {
-  let result = "";
-  for (let i = 0; i < 6; i++) {
-    const randomIndex = Math.floor(Math.random() * 10);
-    result += "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".charAt(randomIndex);
-  }
-  return result;
-};
+
 export default Revenue;

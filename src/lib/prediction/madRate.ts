@@ -59,10 +59,14 @@ const isPositiveDivergence = (mad: number[], prices: number[]): boolean => {
   return currentMAD > madMin;
 };
 
-export const checkBuySignalOfMadRate = (data: { shortMad: number[]; longMad: number[]; prices: number[] }): boolean => {
-  return (
-    isGoldenCross(data.shortMad, data.longMad) ||
-    isOversoldRebound(data.shortMad) ||
-    isPositiveDivergence(data.shortMad, data.prices)
-  );
+export const checkBuySignalOfMadRate = (data: {
+  shortMad: number[];
+  longMad: number[];
+  prices: number[];
+}): boolean[] => {
+  return [
+    isGoldenCross(data.shortMad, data.longMad),
+    isOversoldRebound(data.shortMad),
+    isPositiveDivergence(data.shortMad, data.prices),
+  ];
 };
