@@ -212,8 +212,12 @@ export const fetchLatestPriceBoard = async (
   });
   const detail = await response.json();
   const latestPrice = Number(detail.priceBoard.price.replace(/,/g, ""));
+  const date = detail.priceBoard.priceDateTime.includes("/")
+    ? `${formatFullDate(new Date())} 15:30`
+    : `${formatFullDate(new Date())} ${detail.priceBoard.priceDateTime}`;
+  console.log(date);
   return {
-    dateTime_str: `${formatFullDate(new Date())} ${detail.priceBoard.priceDateTime}`,
+    dateTime_str: date,
     dateTime: 0,
     close: latestPrice,
     open: latestPrice,
