@@ -154,16 +154,14 @@ const formatRsiAndPrices = (series: Pick<MarketDataResponse, "series">["series"]
 };
 
 const formatOpenClose = (series: Pick<MarketDataResponse, "series">["series"]) => {
-  const opens: number[] = [];
   const closes: number[] = [];
   for (const item of series) {
-    const { open, close } = item;
+    const { close } = item;
     if (close === null) continue;
 
-    opens.push(open);
     closes.push(close);
   }
-  return { opens, closes };
+  return closes;
 };
 
 const formatMacd = (series: Pick<MarketDataResponse, "series">["series"]) => {

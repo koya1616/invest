@@ -29,11 +29,11 @@ const checkConsecutiveRise = (closes: number[], period: number): boolean => {
  * @param period - 移動平均線を計算する期間。
  * @returns 最新の終値が移動平均線を上回っている場合は `true`、そうでない場合は `false` を返します。入力配列の長さが `period` 未満の場合も `false` を返します。
  */
-const checkMACross = (opens: number[], closes: number[], period: number): boolean => {
-  if (opens.length < period || closes.length < period) return false;
+const checkMACross = (closes: number[], period: number): boolean => {
+  if (closes.length < period) return false;
 
-  const openMA = opens.slice(-period).reduce((sum, val) => sum + val, 0) / period;
-  return closes.slice(-1)[0] > openMA;
+  const closeMA = closes.slice(-period).reduce((sum, val) => sum + val, 0) / period;
+  return closes.slice(-1)[0] > closeMA;
 };
 
 /**
@@ -50,10 +50,6 @@ const checkRangeBreak = (closes: number[], period: number): boolean => {
   return closes.slice(-1)[0] > prevHigh;
 };
 
-export const checkBuySignalOfOpenClose = (data: { opens: number[]; closes: number[] }): boolean[] => {
-  return [
-    checkConsecutiveRise(data.closes, 3),
-    checkMACross(data.opens, data.closes, 5),
-    checkRangeBreak(data.closes, 5),
-  ];
+export const checkBuySignalOfOpenClose = (closes: number[]): boolean[] => {
+  return [checkConsecutiveRise(closes, 3), checkMACross(closes, 5), checkRangeBreak(closes, 5)];
 };
