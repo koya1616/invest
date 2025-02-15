@@ -13,8 +13,9 @@ const checkConsecutiveRise = (closes: number[], period: number): boolean => {
   if (closes.length < period) return false;
 
   let upCount = 0;
+  const recentCloses = closes.slice(-period);
   for (let i = 1; i < period; i++) {
-    if (closes[i] > closes[i - 1]) upCount++;
+    if (recentCloses[i] > recentCloses[i - 1]) upCount++;
   }
 
   return upCount >= period - 1;
@@ -32,7 +33,7 @@ const checkMACross = (opens: number[], closes: number[], period: number): boolea
   if (opens.length < period || closes.length < period) return false;
 
   const openMA = opens.slice(-period).reduce((sum, val) => sum + val, 0) / period;
-  return closes[closes.length - 1] > openMA;
+  return closes.slice(-1)[0] > openMA;
 };
 
 /**
@@ -46,13 +47,13 @@ const checkRangeBreak = (closes: number[], period: number): boolean => {
   if (closes.length < period) return false;
 
   const prevHigh = Math.max(...closes.slice(-period, -1));
-  return closes[closes.length - 1] > prevHigh;
+  return closes.slice(-1)[0] > prevHigh;
 };
 
-export const checkBuySignalOfOpenClose = (data: { opens: number[]; closes: number[] }, period: number): boolean[] => {
+export const checkBuySignalOfOpenClose = (data: { opens: number[]; closes: number[] }): boolean[] => {
   return [
-    checkConsecutiveRise(data.closes, period),
-    checkMACross(data.opens, data.closes, period),
-    checkRangeBreak(data.closes, period),
+    checkConsecutiveRise(data.closes, 3),
+    checkMACross(data.opens, data.closes, 5),
+    checkRangeBreak(data.closes, 5),
   ];
 };

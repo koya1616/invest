@@ -15,7 +15,7 @@ const Prediction = async ({ code, name, interval }: { code: string; name: string
   const series = interval === "1" || interval === "5" ? data.series : data.series;
 
   const isBuySignalOfRsi = checkBuySignalOfRsi(formatRsiAndPrices(series));
-  const isBuySignalOfOpenClose = checkBuySignalOfOpenClose(formatOpenClose(series), 3);
+  const isBuySignalOfOpenClose = checkBuySignalOfOpenClose(formatOpenClose(series));
   const isBuySignalOfMacd = checkBuySignalOfMacd(formatMacd(series));
   const isBuySignalOfMadRate = checkBuySignalOfMadRate(formatMadRate(series));
   const isBuySignalOfRci = checkBuySignalOfRci(formatRci(series));
