@@ -103,8 +103,8 @@ const detectDoubleBottom = (rsi: number[]): boolean => {
  */
 const detectSupportBounce = (rsi: number[]): boolean => {
   const support = Math.min(...rsi.slice(0, -2));
-  const latest = rsi[rsi.length - 1];
-  const previous = rsi[rsi.length - 2];
+  const latest = rsi.slice(-1)[0];
+  const previous = rsi.slice(-2)[0];
   return previous <= support + 2 && latest > previous;
 };
 
@@ -124,10 +124,10 @@ const detectMACross = (rsi: number[]): boolean => {
   const ma5 = calculateMA(rsi, 5);
   const ma13 = calculateMA(rsi, 13);
 
-  const previousMa5 = ma5[ma5.length - 2];
-  const latestMa5 = ma5[ma5.length - 1];
-  const previousMa13 = ma13[ma13.length - 2];
-  const latestMa13 = ma13[ma13.length - 1];
+  const previousMa5 = ma5.slice(-2)[0];
+  const latestMa5 = ma5.slice(-1)[0];
+  const previousMa13 = ma13.slice(-2)[0];
+  const latestMa13 = ma13.slice(-1)[0];
 
   return previousMa5 <= previousMa13 && latestMa5 > latestMa13;
 };
