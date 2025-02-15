@@ -41,83 +41,16 @@ const Prediction = async ({ code, name, interval }: { code: string; name: string
         </h2>
 
         <div className="space-y-1 text-xs">
-          <div className="flex justify-between items-center border-b">
-            <span>配当利回り</span>
-            <span>{detail.referenceIndex.shareDividendYield}%</span>
-          </div>
+          <Detail title="配当利回り" value={detail.referenceIndex.shareDividendYield} unit="%" />
+          <Detail title="DPS" value={detail.referenceIndex.dps} unit="円" />
+          <Detail title="PER" value={detail.referenceIndex.per} unit="" />
+          <Detail title="PBR" value={detail.referenceIndex.pbr} unit="" />
+          <Detail title="自己資本率" value={detail.referenceIndex.equityRatio} unit="%" />
 
-          <div className="flex justify-between items-center border-b">
-            <span>DPS</span>
-            <span>{detail.referenceIndex.dps}円</span>
-          </div>
-
-          <div className="flex justify-between items-center border-b">
-            <span>PER</span>
-            <span>{detail.referenceIndex.per}</span>
-          </div>
-
-          <div className="flex justify-between items-center border-b">
-            <span>PBR</span>
-            <span>{detail.referenceIndex.pbr}</span>
-          </div>
-
-          <div className="flex justify-between items-center border-b">
-            <span>自己資本率</span>
-            <span>{detail.referenceIndex.equityRatio}%</span>
-          </div>
-
-          <div className="flex justify-between items-center border-b">
-            <span>RSI</span>
-            <span>
-              {isBuySignalOfRsi.map(
-                (item) =>
-                  item && (
-                    <span key={generateRandomString()} className="text-red-500">
-                      ↑
-                    </span>
-                  ),
-              )}
-            </span>
-          </div>
-          <div className="flex justify-between items-center border-b">
-            <span>MACD</span>
-            <span>
-              {isBuySignalOfMacd.map(
-                (item) =>
-                  item && (
-                    <span key={generateRandomString()} className="text-red-500">
-                      ↑
-                    </span>
-                  ),
-              )}
-            </span>
-          </div>
-          <div className="flex justify-between items-center border-b">
-            <span>乖離率</span>
-            <span>
-              {isBuySignalOfMadRate.map(
-                (item) =>
-                  item && (
-                    <span key={generateRandomString()} className="text-red-500">
-                      ↑
-                    </span>
-                  ),
-              )}
-            </span>
-          </div>
-          <div className="flex justify-between items-center border-b">
-            <span>RCI</span>
-            <span>
-              {isBuySignalOfRci.map(
-                (item) =>
-                  item && (
-                    <span key={generateRandomString()} className="text-red-500">
-                      ↑
-                    </span>
-                  ),
-              )}
-            </span>
-          </div>
+          <Signal title="RSI" signals={isBuySignalOfRsi} />
+          <Signal title="MACD" signals={isBuySignalOfMacd} />
+          <Signal title="乖離率" signals={isBuySignalOfMadRate} />
+          <Signal title="RCI" signals={isBuySignalOfRci} />
 
           <div className="flex justify-between items-center">
             <span>OpCl</span>
@@ -135,6 +68,40 @@ const Prediction = async ({ code, name, interval }: { code: string; name: string
         </div>
       </div>
     </ToTimeseriesButton>
+  );
+};
+
+const RowBlock = ({ children }: { children: React.ReactNode }) => {
+  return <div className="flex justify-between items-center border-b">{children}</div>;
+};
+
+const Detail = ({ title, value, unit }: { title: string; value: string; unit: string }) => {
+  return (
+    <RowBlock>
+      <span>{title}</span>
+      <span>
+        {value}
+        {unit}
+      </span>
+    </RowBlock>
+  );
+};
+
+const Signal = ({ title, signals }: { title: string; signals: boolean[] }) => {
+  return (
+    <RowBlock>
+      <span>{title}</span>
+      <span>
+        {signals.map(
+          (item) =>
+            item && (
+              <span key={generateRandomString()} className="text-red-500">
+                ↑
+              </span>
+            ),
+        )}
+      </span>
+    </RowBlock>
   );
 };
 
