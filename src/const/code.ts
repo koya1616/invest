@@ -14,9 +14,7 @@ export const CODE = [
   { code: "9434", name: "ソフトバンク" },
 ];
 
-export const REALTIME_CODE = [
-  { code: "7203", name: "トヨタ" },
-];
+export const REALTIME_CODE = [{ code: "7203", name: "トヨタ" }];
 
 export const REVENUE_CODE = [
   1301, 1332, 1333, 1375, 1376, 1377, 1379, 1380, 1381, 1382, 1383, 1384, 1401, 1407, 1414, 1417, 1418, 1419, 1420,
