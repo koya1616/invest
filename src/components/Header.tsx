@@ -6,6 +6,7 @@ import SelectCode from "./SelectCode";
 import SelectInterval from "./SelectInterval";
 import ToHomeButton from "./ToHomeButton";
 import ToRevenueButton from "./ToRevenueButton";
+import SelectRealtimeInterval from "./SelectRealtimeInterval";
 
 const Header = ({ code, interval }: { code: string; interval: string }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,6 +29,7 @@ const Header = ({ code, interval }: { code: string; interval: string }) => {
           <ToHomeButton />
           <SelectCode code={code} />
           <SelectInterval code={code} interval={interval} />
+          <SelectRealtimeInterval code={code} interval={interval} />
           <ToRevenueButton />
         </div>
 
@@ -43,6 +45,7 @@ const Header = ({ code, interval }: { code: string; interval: string }) => {
           <ToHomeButton />
           <SelectCode code={code} />
           <SelectInterval code={code} interval={interval} />
+          <SelectRealtimeInterval code={code} interval={interval} />
           <ToRevenueButton />
         </div>
       </div>
