@@ -1,4 +1,4 @@
-interface TimeseriesData {
+export interface TimeseriesData {
   value: number;
   datetime: string;
 }
